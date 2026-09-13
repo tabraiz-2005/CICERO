@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Search, X, ArrowRight } from 'lucide-react';
-import { searchCatalog } from '@/lib/commerce/api';
 import { SearchResult } from '@/lib/commerce/types';
 import { formatPrice } from '@/lib/utils';
 import { useLocalization } from '@/context/LocalizationContext';
@@ -46,20 +45,62 @@ export const PredictiveSearchModal: React.FC<PredictiveSearchModalProps> = ({
   }, [isOpen, onClose]);
 
   useEffect(() => {
-    if (!query.trim()) {
+    const normalizedQuery = query.trim();
+
+    if (!normalizedQuery) {
       setResults(null);
       setIsSearching(false);
       return;
     }
 
-    setIsSearching(true);
-    const timer = setTimeout(async () => {
-      const res = await searchCatalog(query);
-      setResults(res);
-      setIsSearching(false);
-    }, 200);
+    const controller = new AbortController();
 
-    return () => clearTimeout(timer);
+    setIsSearching(true);
+
+    const timer = window.setTimeout(async () => {
+      try {
+        const response = await fetch(
+          `/api/search?q=${encodeURIComponent(normalizedQuery)}`,
+          {
+            signal: controller.signal,
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error('Search request failed.');
+        }
+
+        const searchResults =
+          (await response.json()) as SearchResult;
+
+        setResults(searchResults);
+      } catch (error) {
+        if (
+          error instanceof DOMException &&
+          error.name === 'AbortError'
+        ) {
+          return;
+        }
+
+        console.error('Search interface error:', error);
+
+        setResults({
+          products: [],
+          categories: [],
+          articles: [],
+          totalResults: 0,
+        });
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsSearching(false);
+        }
+      }
+    }, 250);
+
+    return () => {
+      window.clearTimeout(timer);
+      controller.abort();
+    };
   }, [query]);
 
   if (!isOpen) return null;
