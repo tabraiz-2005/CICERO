@@ -1,8 +1,8 @@
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
-export function createClient() {
-    const cookieStore = cookies();
+export async function createClient() {
+    const cookieStore = await cookies();
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
@@ -21,8 +21,7 @@ export function createClient() {
                         cookieStore.set(name, value, options);
                     });
                 } catch {
-                    // Server Components cannot always write cookies.
-                    // Authentication middleware will handle session refresh later.
+                    // Authentication middleware will refresh cookies when required.
                 }
             },
         },

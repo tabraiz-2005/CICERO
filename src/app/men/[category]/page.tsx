@@ -3,18 +3,24 @@ import { PLPTemplate } from '@/components/product/PLPTemplate';
 import { notFound } from 'next/navigation';
 
 interface PageProps {
-  params: { category: string };
+  params: Promise<{ category: string }>;
 }
 
 export default async function MenCategoryPage({ params }: PageProps) {
-  const categoryInfo = await getCategoryBySlug(params.category);
-  const products = await getProducts({ gender: 'men', category: params.category });
+  const { category } = await params;
+
+  const categoryInfo = await getCategoryBySlug(category);
+  const products = await getProducts({
+    gender: 'men',
+    category,
+  });
 
   if (!categoryInfo && products.length === 0) {
     notFound();
   }
 
-  const categoryName = categoryInfo?.name || params.category.replace(/-/g, ' ');
+  const categoryName =
+    categoryInfo?.name || category.replace(/-/g, ' ');
 
   return (
     <PLPTemplate
@@ -24,7 +30,10 @@ export default async function MenCategoryPage({ params }: PageProps) {
       heroImage={categoryInfo?.heroImage}
       breadcrumbs={[
         { label: 'Men', href: '/men' },
-        { label: categoryName, href: `/men/${params.category}` },
+        {
+          label: categoryName,
+          href: `/men/${category}`,
+        },
       ]}
       products={products}
     />

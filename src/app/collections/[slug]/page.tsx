@@ -3,26 +3,34 @@ import { PLPTemplate } from '@/components/product/PLPTemplate';
 import { notFound } from 'next/navigation';
 
 interface PageProps {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export default async function CollectionDetailPage({ params }: PageProps) {
-  const collectionInfo = await getCollectionBySlug(params.slug);
-  const products = await getProducts({ collection: params.slug });
+  const { slug } = await params;
+
+  const collectionInfo = await getCollectionBySlug(slug);
+  const products = await getProducts({ collection: slug });
 
   if (!collectionInfo && products.length === 0) {
     notFound();
   }
 
+  const collectionName =
+    collectionInfo?.name || slug.replace(/-/g, ' ');
+
   return (
     <PLPTemplate
-      title={collectionInfo?.name || params.slug.replace(/-/g, ' ')}
+      title={collectionName}
       subtitle={collectionInfo?.season.toUpperCase() || 'CURATED CAPSULE'}
       description={collectionInfo?.description}
       heroImage={collectionInfo?.heroImage}
       breadcrumbs={[
         { label: 'Collections', href: '/collections' },
-        { label: collectionInfo?.name || params.slug, href: `/collections/${params.slug}` },
+        {
+          label: collectionName,
+          href: `/collections/${slug}`,
+        },
       ]}
       products={products}
     />
