@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { getCollections } from '@/lib/commerce/api';
+import { getCollections } from '@/lib/commerce/supabaseApi';
 
 export default async function CollectionsIndexPage() {
   const collections = await getCollections();

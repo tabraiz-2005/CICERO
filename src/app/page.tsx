@@ -1,4 +1,4 @@
-import { getProducts } from '@/lib/commerce/api';
+import { getProducts } from '@/lib/commerce/supabaseApi';
 import { HeroSection } from '@/components/home/HeroSection';
 import { EditorialStory } from '@/components/home/EditorialStory';
 import { FeaturedCollectionGrid } from '@/components/home/FeaturedCollectionGrid';

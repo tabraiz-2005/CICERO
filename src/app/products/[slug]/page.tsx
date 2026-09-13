@@ -1,4 +1,4 @@
-import { getProductBySlug, getProducts } from '@/lib/commerce/api';
+import { getProductBySlug, getProducts } from '@/lib/commerce/supabaseApi';
 import { ProductGallery } from '@/components/product/ProductGallery';
 import { ProductInfo } from '@/components/product/ProductInfo';
 import { CompleteTheLook } from '@/components/product/CompleteTheLook';

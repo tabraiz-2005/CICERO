@@ -1,4 +1,4 @@
-import { getProducts } from '@/lib/commerce/api';
+import { getProducts } from '@/lib/commerce/supabaseApi';
 import { PLPTemplate } from '@/components/product/PLPTemplate';
 
 export default async function MenPage() {

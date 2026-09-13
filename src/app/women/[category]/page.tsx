@@ -1,4 +1,4 @@
-import { getProducts, getCategoryBySlug } from '@/lib/commerce/api';
+import { getProducts, getCategoryBySlug } from '@/lib/commerce/supabaseApi';
 import { PLPTemplate } from '@/components/product/PLPTemplate';
 import { notFound } from 'next/navigation';
 
