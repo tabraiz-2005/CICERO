@@ -188,7 +188,7 @@ function mapProduct(row: ProductRow): Product {
 
     const variants: ProductVariant[] = (row.product_variants ?? []).map(
         (variant) => ({
-            id: variant.legacy_id ?? variant.id,
+            id: variant.id,
             sku: variant.sku,
             name: variant.name,
             color: variant.color,
@@ -336,7 +336,12 @@ export async function getProducts(
     const { data, error } = await query;
 
     if (error) {
-        console.error('Supabase products error:', error);
+        console.error('Supabase products error:', {
+            message: error.message,
+            details: error.details,
+            hint: error.hint,
+            code: error.code,
+        });
         throw new Error('Unable to load products.');
     }
 
