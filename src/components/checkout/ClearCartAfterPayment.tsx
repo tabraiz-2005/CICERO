@@ -16,5 +16,5 @@ export function ClearCartAfterPayment() {
   }, [clearCart]);
 
   return null;
-}
 
+}
