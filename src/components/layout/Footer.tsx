@@ -126,8 +126,22 @@ export const Footer: React.FC = () => {
       {/* Bottom Bar & Legal Terms */}
       <div className="border-t border-maison-charcoal/50 py-8 px-6 sm:px-12">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between text-[11px] text-maison-taupe tracking-widest space-y-4 md:space-y-0">
-          <div>
-            &copy; {new Date().getFullYear()} LUCEVALIE MAISON S.A. ALL RIGHTS RESERVED.
+          <div className="text-center md:text-left space-y-2">
+            <div>
+              &copy; {new Date().getFullYear()} LUCEVALIE MAISON S.A. ALL RIGHTS RESERVED.
+            </div>
+
+            <div className="text-[10px] tracking-[0.16em]">
+              Website designed and developed by{' '}
+              <a
+                href="https://digitalgravitas.ai/website-development/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-maison-stone hover:text-maison-ivory transition-colors"
+              >
+                Digital Gravitas
+              </a>
+            </div>
           </div>
           <div className="flex items-center space-x-6">
             <Link href="/privacy" className="hover:text-maison-ivory transition-colors">PRIVACY POLICY</Link>
