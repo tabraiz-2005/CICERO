@@ -1,22 +1,35 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { CurrencyCode } from './commerce/types';
-import { CURRENCIES } from './commerce/mockCatalog';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatPrice(priceInUSD: number, currencyCode: CurrencyCode = 'USD'): string {
-  const config = CURRENCIES[currencyCode] || CURRENCIES.USD;
-  const converted = priceInUSD * config.rate;
+/** Format a whole-currency amount (e.g. 690 → "$690"). */
+export function formatPrice(amount: number, currency = 'USD'): string {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency,
+    minimumFractionDigits: amount % 1 === 0 ? 0 : 2,
+    maximumFractionDigits: 2,
+  }).format(amount);
+}
 
-  if (currencyCode === 'JPY') {
-    return `${config.symbol}${Math.round(converted).toLocaleString('en-US')}`;
-  }
+/** Format an amount stored in cents (orders, settings). */
+export function formatCents(cents: number, currency = 'USD'): string {
+  return formatPrice(cents / 100, currency);
+}
 
-  return `${config.symbol}${converted.toLocaleString('en-US', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  })}`;
+export function slugify(input: string): string {
+  return input
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80);
+}
+
+export function primaryImage(images: { url: string; isPrimary?: boolean }[]): string {
+  return images.find((i) => i.isPrimary)?.url || images[0]?.url || '';
 }

@@ -1,15 +1,15 @@
-import "server-only";
-import Stripe from "stripe";
+import 'server-only';
+import Stripe from 'stripe';
+import { env, ConfigError } from '@/lib/env';
 
-const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+let client: Stripe | null = null;
 
-if (!stripeSecretKey) {
-    throw new Error("Missing STRIPE_SECRET_KEY in .env.local");
+/** Created on first use so a missing key never breaks the build. */
+export function getStripe(): Stripe {
+  if (client) return client;
+  if (!env.stripeSecretKey) throw new ConfigError(['STRIPE_SECRET_KEY']);
+  client = new Stripe(env.stripeSecretKey, {
+    appInfo: { name: 'CICERO', version: '1.0.0' },
+  });
+  return client;
 }
-
-export const stripe = new Stripe(stripeSecretKey, {
-    appInfo: {
-        name: "LUCEVALIE",
-        version: "0.1.0",
-    },
-});

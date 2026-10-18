@@ -1,0 +1,308 @@
+import 'server-only';
+
+import { cache } from 'react';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { env, isSupabaseConfigured } from '@/lib/env';
+import {
+  DEFAULT_SETTINGS,
+  type CategoryItem,
+  type CollectionItem,
+  type Product,
+  type ProductVariant,
+  type StoreSettings,
+} from './types';
+
+/* -------------------------------------------------------------------------- */
+/*  Public (read-only) Supabase client — no cookies, so pages stay cacheable   */
+/* -------------------------------------------------------------------------- */
+
+let publicClient: SupabaseClient | null = null;
+function db(): SupabaseClient | null {
+  if (!isSupabaseConfigured()) return null;
+  if (!publicClient) {
+    publicClient = createClient(env.supabaseUrl, env.supabasePublicKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+      global: { fetch: (input, init) => fetch(input, { ...init, cache: 'no-store' }) },
+    });
+  }
+  return publicClient;
+}
+
+function logError(scope: string, error: unknown) {
+  console.error(`[catalog] ${scope}:`, error);
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Row mapping                                                                */
+/* -------------------------------------------------------------------------- */
+
+const PRODUCT_SELECT = `
+  id, legacy_id, sku, slug, title, subtitle, description, price, compare_at_price, currency,
+  gender, material, care_instructions, craftsmanship_notes, fit_info, shipping_info,
+  seo_title, seo_description, is_new_arrival, is_featured, is_bestseller,
+  related_product_slugs, complete_the_look_slugs, published_at, created_at,
+  category:categories ( slug, name ),
+  collection:collections ( slug, name ),
+  product_images ( id, url, alt_text, width, height, position, is_primary, is_hover ),
+  product_variants ( id, sku, name, color, color_hex, color_family, size, price,
+    compare_at_price, inventory_quantity, is_active, image_url )
+`;
+
+type Rel = { slug: string; name: string };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Row = Record<string, any>;
+
+function first<T>(r: T | T[] | null | undefined): T | null {
+  if (Array.isArray(r)) return r[0] ?? null;
+  return r ?? null;
+}
+
+const SIZE_ORDER = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', 'ONE SIZE'];
+export function sortSizes(sizes: string[]) {
+  return [...sizes].sort((a, b) => {
+    const ia = SIZE_ORDER.indexOf(a.toUpperCase());
+    const ib = SIZE_ORDER.indexOf(b.toUpperCase());
+    if (ia !== -1 || ib !== -1) return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+    const na = parseFloat(a);
+    const nb = parseFloat(b);
+    if (!isNaN(na) && !isNaN(nb)) return na - nb;
+    return a.localeCompare(b);
+  });
+}
+
+export function mapProduct(row: Row): Product {
+  const category = first<Rel>(row.category);
+  const collection = first<Rel>(row.collection);
+
+  const images = [...(row.product_images ?? [])]
+    .sort((a: Row, b: Row) => a.position - b.position)
+    .map((img: Row) => ({
+      url: img.url,
+      alt: img.alt_text || row.title,
+      width: img.width ?? 1200,
+      height: img.height ?? 1600,
+      isPrimary: img.is_primary,
+      isHover: img.is_hover,
+    }));
+  // Primary first.
+  images.sort((a, b) => Number(Boolean(b.isPrimary)) - Number(Boolean(a.isPrimary)));
+
+  const variants: ProductVariant[] = (row.product_variants ?? [])
+    .filter((v: Row) => v.is_active)
+    .map((v: Row) => ({
+      id: v.id,
+      sku: v.sku,
+      name: v.name,
+      color: v.color,
+      colorHex: v.color_hex,
+      colorFamily: v.color_family,
+      size: v.size,
+      inStock: v.inventory_quantity > 0,
+      inventoryQuantity: v.inventory_quantity,
+      price: Number(v.price),
+      compareAtPrice: v.compare_at_price == null ? undefined : Number(v.compare_at_price),
+      image: v.image_url ?? undefined,
+    }));
+
+  const colors = new Map<string, string>();
+  for (const v of variants) if (!colors.has(v.color)) colors.set(v.color, v.colorHex);
+
+  return {
+    id: row.id,
+    sku: row.sku,
+    slug: row.slug,
+    title: row.title,
+    subtitle: row.subtitle ?? undefined,
+    description: row.description,
+    price: Number(row.price),
+    compareAtPrice: row.compare_at_price == null ? undefined : Number(row.compare_at_price),
+    currency: row.currency,
+    category: category?.slug ?? 'uncategorised',
+    categoryName: category?.name ?? 'Garment',
+    collection: collection?.slug ?? null,
+    collectionName: collection?.name ?? null,
+    gender: row.gender,
+    material: row.material ?? '',
+    images,
+    variants,
+    availableColors: Array.from(colors, ([name, hex]) => ({ name, hex })),
+    availableSizes: sortSizes(Array.from(new Set(variants.map((v) => v.size)))),
+    careInstructions: row.care_instructions ?? [],
+    craftsmanshipNotes: row.craftsmanship_notes ?? '',
+    fitInfo: row.fit_info ?? '',
+    shippingInfo: row.shipping_info ?? '',
+    seoTitle: row.seo_title || row.title,
+    seoDescription: row.seo_description || row.description,
+    isNewArrival: row.is_new_arrival,
+    isFeatured: row.is_featured,
+    isBestseller: row.is_bestseller,
+    relatedProductSlugs: row.related_product_slugs ?? [],
+    completeTheLookSlugs: row.complete_the_look_slugs ?? [],
+    totalStock: variants.reduce((n, v) => n + v.inventoryQuantity, 0),
+  };
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Queries                                                                    */
+/* -------------------------------------------------------------------------- */
+
+export type SortKey = 'featured' | 'newest' | 'price-low' | 'price-high';
+
+export interface ProductFilter {
+  gender?: 'men' | 'women' | 'all';
+  category?: string;
+  collection?: string;
+  search?: string;
+  sort?: SortKey;
+  newOnly?: boolean;
+  featuredOnly?: boolean;
+  limit?: number;
+}
+
+/** All active products, mapped. Cached per request. */
+const getAllActiveProducts = cache(async (): Promise<Product[]> => {
+  const client = db();
+  if (!client) return [];
+  const { data, error } = await client
+    .from('products')
+    .select(PRODUCT_SELECT)
+    .eq('status', 'active')
+    .order('published_at', { ascending: false, nullsFirst: false });
+  if (error) {
+    logError('products', error);
+    return [];
+  }
+  return (data ?? []).map(mapProduct);
+});
+
+export async function getProducts(filter: ProductFilter = {}): Promise<Product[]> {
+  let products = await getAllActiveProducts();
+
+  if (filter.gender && filter.gender !== 'all') {
+    products = products.filter((p) => p.gender === filter.gender || p.gender === 'unisex');
+  }
+  if (filter.category) products = products.filter((p) => p.category === filter.category);
+  if (filter.collection) products = products.filter((p) => p.collection === filter.collection);
+  if (filter.newOnly) products = products.filter((p) => p.isNewArrival);
+  if (filter.featuredOnly) products = products.filter((p) => p.isFeatured);
+  if (filter.search) {
+    const terms = filter.search.toLowerCase().split(/\s+/).filter(Boolean);
+    products = products.filter((p) => {
+      const hay = [p.title, p.subtitle, p.description, p.material, p.categoryName, p.gender,
+        ...p.availableColors.map((c) => c.name)].join(' ').toLowerCase();
+      return terms.every((t) => hay.includes(t));
+    });
+  }
+
+  const sorted = [...products];
+  switch (filter.sort) {
+    case 'price-low':
+      sorted.sort((a, b) => a.price - b.price);
+      break;
+    case 'price-high':
+      sorted.sort((a, b) => b.price - a.price);
+      break;
+    case 'newest':
+      sorted.sort((a, b) => Number(Boolean(b.isNewArrival)) - Number(Boolean(a.isNewArrival)));
+      break;
+    default:
+      sorted.sort((a, b) => Number(Boolean(b.isFeatured)) - Number(Boolean(a.isFeatured)));
+  }
+  return filter.limit ? sorted.slice(0, filter.limit) : sorted;
+}
+
+export async function countAllProducts(): Promise<number> {
+  return (await getAllActiveProducts()).length;
+}
+
+export async function getProductBySlug(slug: string): Promise<Product | null> {
+  const client = db();
+  if (!client) return null;
+  const { data, error } = await client
+    .from('products')
+    .select(PRODUCT_SELECT)
+    .eq('slug', slug)
+    .eq('status', 'active')
+    .maybeSingle();
+  if (error) {
+    logError('product', error);
+    return null;
+  }
+  return data ? mapProduct(data) : null;
+}
+
+export async function getRelatedProducts(product: Product, limit = 4): Promise<Product[]> {
+  const all = await getAllActiveProducts();
+  const explicit = (product.relatedProductSlugs ?? [])
+    .map((s) => all.find((p) => p.slug === s))
+    .filter((p): p is Product => Boolean(p));
+  const sameCategory = all.filter(
+    (p) => p.id !== product.id && p.category === product.category && !explicit.includes(p)
+  );
+  const rest = all.filter((p) => p.id !== product.id && !explicit.includes(p) && !sameCategory.includes(p));
+  return [...explicit, ...sameCategory, ...rest].slice(0, limit);
+}
+
+export const getCategories = cache(async (): Promise<CategoryItem[]> => {
+  const client = db();
+  if (!client) return [];
+  const [{ data, error }, products] = await Promise.all([
+    client
+      .from('categories')
+      .select('id, slug, name, gender, description, hero_image_url')
+      .eq('is_active', true)
+      .order('sort_order'),
+    getAllActiveProducts(),
+  ]);
+  if (error) {
+    logError('categories', error);
+    return [];
+  }
+  return (data ?? []).map((c: Row) => ({
+    id: c.id,
+    slug: c.slug,
+    name: c.name,
+    gender: c.gender,
+    description: c.description ?? '',
+    heroImage: c.hero_image_url ?? '',
+    itemCount: products.filter((p) => p.category === c.slug).length,
+  }));
+});
+
+export const getCollections = cache(async (): Promise<CollectionItem[]> => {
+  const client = db();
+  if (!client) return [];
+  const [{ data, error }, products] = await Promise.all([
+    client
+      .from('collections')
+      .select('id, slug, name, season, description, story_quote, hero_image_url')
+      .eq('is_active', true)
+      .order('sort_order'),
+    getAllActiveProducts(),
+  ]);
+  if (error) {
+    logError('collections', error);
+    return [];
+  }
+  return (data ?? []).map((c: Row) => ({
+    id: c.id,
+    slug: c.slug,
+    name: c.name,
+    season: c.season ?? '',
+    description: c.description ?? '',
+    storyQuote: c.story_quote ?? '',
+    heroImage: c.hero_image_url ?? '',
+    featuredProductsCount: products.filter((p) => p.collection === c.slug).length,
+  }));
+});
+
+export const getSettings = cache(async (): Promise<StoreSettings> => {
+  const client = db();
+  if (!client) return DEFAULT_SETTINGS;
+  const { data, error } = await client.from('store_settings').select('*').eq('id', 1).maybeSingle();
+  if (error || !data) {
+    if (error) logError('settings', error);
+    return DEFAULT_SETTINGS;
+  }
+  return { ...DEFAULT_SETTINGS, ...data } as StoreSettings;
+});

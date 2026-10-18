@@ -1,20 +1,21 @@
-import "server-only";
-import { createClient } from "@supabase/supabase-js";
+import 'server-only';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { env, ConfigError } from '@/lib/env';
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseSecretKey = process.env.SUPABASE_SECRET_KEY;
+let client: SupabaseClient | null = null;
 
-if (!supabaseUrl || !supabaseSecretKey) {
-    throw new Error("Missing server-only Supabase environment variables.");
+/**
+ * Service-role client. Bypasses RLS — only ever use on the server,
+ * after checking the caller is allowed to do what they ask.
+ */
+export function getSupabaseAdmin(): SupabaseClient {
+  if (client) return client;
+  const missing: string[] = [];
+  if (!env.supabaseUrl) missing.push('NEXT_PUBLIC_SUPABASE_URL');
+  if (!env.supabaseSecretKey) missing.push('SUPABASE_SECRET_KEY');
+  if (missing.length) throw new ConfigError(missing);
+  client = createClient(env.supabaseUrl, env.supabaseSecretKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
+  return client;
 }
-
-export const supabaseAdmin = createClient(
-    supabaseUrl,
-    supabaseSecretKey,
-    {
-        auth: {
-            autoRefreshToken: false,
-            persistSession: false,
-        },
-    }
-);

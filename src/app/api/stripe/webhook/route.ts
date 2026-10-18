@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import type Stripe from "stripe";
-import { stripe } from "@/lib/stripe/server";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { getStripe } from "@/lib/stripe/server";
+import { getSupabaseAdmin } from "@/lib/supabase/admin";
+import { env } from "@/lib/env";
 
 export const runtime = "nodejs";
 
@@ -22,7 +23,7 @@ async function confirmPayment(session: Stripe.Checkout.Session) {
     const paymentIntentId = getObjectId(session.payment_intent);
     const customerId = getObjectId(session.customer);
 
-    const { error } = await supabaseAdmin.rpc("confirm_order_payment", {
+    const { error } = await getSupabaseAdmin().rpc("confirm_order_payment", {
         p_order_id: orderId,
         p_checkout_session_id: session.id,
         p_payment_intent_id: paymentIntentId,
@@ -41,7 +42,7 @@ async function releaseInventory(session: Stripe.Checkout.Session) {
         throw new Error("Stripe session is missing order_id metadata.");
     }
 
-    const { error } = await supabaseAdmin.rpc(
+    const { error } = await getSupabaseAdmin().rpc(
         "release_order_inventory",
         {
             p_order_id: orderId,
@@ -54,7 +55,7 @@ async function releaseInventory(session: Stripe.Checkout.Session) {
 }
 
 export async function POST(request: NextRequest) {
-    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    const webhookSecret = env.stripeWebhookSecret;
     const signature = request.headers.get("stripe-signature");
 
     if (!webhookSecret || !signature) {
@@ -69,7 +70,7 @@ export async function POST(request: NextRequest) {
     let event: Stripe.Event;
 
     try {
-        event = stripe.webhooks.constructEvent(
+        event = getStripe().webhooks.constructEvent(
             payload,
             signature,
             webhookSecret
@@ -83,7 +84,7 @@ export async function POST(request: NextRequest) {
 
     const object = event.data.object as { id?: string };
 
-    const { error: claimError } = await supabaseAdmin
+    const { error: claimError } = await getSupabaseAdmin()
         .from("stripe_webhook_events")
         .insert({
             stripe_event_id: event.id,
@@ -95,7 +96,7 @@ export async function POST(request: NextRequest) {
 
     if (claimError?.code === "23505") {
         const { data: existing, error: existingError } =
-            await supabaseAdmin
+            await getSupabaseAdmin()
                 .from("stripe_webhook_events")
                 .select("processing_status, received_at")
                 .eq("stripe_event_id", event.id)
@@ -121,7 +122,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ received: true });
         }
 
-        const { error: retryError } = await supabaseAdmin
+        const { error: retryError } = await getSupabaseAdmin()
             .from("stripe_webhook_events")
             .update({
                 processing_status: "processing",
@@ -173,7 +174,7 @@ export async function POST(request: NextRequest) {
                 break;
         }
 
-        const { error: completionError } = await supabaseAdmin
+        const { error: completionError } = await getSupabaseAdmin()
             .from("stripe_webhook_events")
             .update({
                 processing_status: "completed",
@@ -193,7 +194,7 @@ export async function POST(request: NextRequest) {
                 ? error.message.slice(0, 500)
                 : "Unknown webhook processing error";
 
-        await supabaseAdmin
+        await getSupabaseAdmin()
             .from("stripe_webhook_events")
             .update({
                 processing_status: "failed",
