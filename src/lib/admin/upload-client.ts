@@ -1,9 +1,6 @@
 'use client';
 
-import { createClient } from '@/lib/supabase/client';
 import { createUploadTarget } from '@/app/admin/_actions/uploads';
-
-const BUCKET = 'product-images';
 
 /** Downscale large photos to max 2000px WebP in the browser before upload. */
 async function compress(file: File): Promise<Blob> {
@@ -29,8 +26,21 @@ export async function uploadImage(file: File, folder: 'products' | 'categories' 
   const type = blob.type || file.type;
   const target = await createUploadTarget(folder, file.name, type);
   if (!target.ok) throw new Error(target.error);
-  const { path, token, publicUrl } = target.data!;
-  const { error } = await createClient().storage.from(BUCKET).uploadToSignedUrl(path, token, blob, { contentType: type, upsert: false });
-  if (error) throw new Error(`Upload failed: ${error.message}`);
+  const { signedUrl, publicUrl } = target.data!;
+  // Upload straight to Supabase Storage with the one-time signed URL — no keys in the browser.
+  const body = new FormData();
+  body.append('cacheControl', '31536000');
+  body.append('', new File([blob], file.name, { type }));
+  const res = await fetch(signedUrl, { method: 'PUT', body, headers: { 'x-upsert': 'false' } });
+  if (!res.ok) {
+    let msg = `${res.status}`;
+    try {
+      const j = await res.json();
+      msg = j.message || j.error || msg;
+    } catch {
+      /* not JSON */
+    }
+    throw new Error(`Upload failed: ${msg}`);
+  }
   return publicUrl;
 }

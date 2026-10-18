@@ -31,6 +31,7 @@ export function Footer({ settings, categories }: { settings: StoreSettings; cate
       links: [
         { href: '/terms', label: 'Terms of sale' },
         { href: '/privacy', label: 'Privacy policy' },
+        { href: '/admin', label: 'Staff login' },
       ],
     },
   ];

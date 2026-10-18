@@ -19,7 +19,7 @@ export async function createUploadTarget(
   folder: 'products' | 'categories' | 'collections' | 'site',
   fileName: string,
   contentType: string
-): Promise<ActionResult<{ path: string; token: string; publicUrl: string }>> {
+): Promise<ActionResult<{ path: string; signedUrl: string; publicUrl: string }>> {
   try {
     await assertAdmin();
     if (!TYPES.includes(contentType)) return { ok: false, error: 'Use a JPG, PNG, WebP, AVIF or GIF image.' };
@@ -31,7 +31,7 @@ export async function createUploadTarget(
     const { data, error } = await admin.storage.from(BUCKET).createSignedUploadUrl(path);
     if (error || !data) throw error ?? new Error('Could not prepare the upload.');
     const publicUrl = admin.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
-    return { ok: true, data: { path, token: data.token, publicUrl } };
+    return { ok: true, data: { path, signedUrl: data.signedUrl, publicUrl } };
   } catch (e) {
     return fail(e);
   }
