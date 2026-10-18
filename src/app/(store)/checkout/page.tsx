@@ -4,11 +4,10 @@ import { CheckoutForm } from './CheckoutForm';
 
 export const metadata: Metadata = { title: 'Checkout', robots: { index: false } };
 
-export default async function CheckoutPage({ searchParams }: { searchParams: Promise<{ cancelled?: string }> }) {
-  const [settings, sp] = await Promise.all([getSettings(), searchParams]);
+export default async function CheckoutPage() {
+  const settings = await getSettings();
   return (
     <CheckoutForm
-      cancelled={sp.cancelled === '1'}
       shipping={{
         standard: settings.standard_shipping_amount,
         express: settings.express_shipping_amount,

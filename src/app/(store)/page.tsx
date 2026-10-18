@@ -34,7 +34,7 @@ export default async function HomePage() {
             <span className="inline-flex items-center gap-3 border border-line-strong bg-surface/80 px-6 py-3.5 font-display text-[11px] uppercase tracking-label backdrop-blur sm:text-[13px]">
               <Sparkles className="h-4 w-4" strokeWidth={1.5} /> {settings.hero_eyebrow}
             </span>
-            <h1 className="display mt-8 text-[64px] sm:text-[110px] lg:mt-12 lg:text-[168px]">{settings.hero_title}</h1>
+            <h1 className="display mt-8 text-[52px] sm:text-[84px] lg:mt-12 lg:text-[120px]">{settings.hero_title}</h1>
             <p className="mt-6 font-display text-sm font-semibold uppercase tracking-wide2 text-muted lg:text-base">{settings.tagline}</p>
             <p className="mt-6 max-w-xl text-lg font-light text-fg/90 lg:text-2xl">{settings.hero_subtitle}</p>
             <div className="mt-10 flex flex-wrap gap-4">
@@ -155,7 +155,7 @@ export default async function HomePage() {
                 : 'Tracked delivery on every order.',
             },
             { icon: RotateCcw, title: '30-day returns', text: 'Changed your mind? Send it back within 30 days.' },
-            { icon: ShieldCheck, title: 'Secure checkout', text: 'Payments processed safely by Stripe.' },
+            { icon: ShieldCheck, title: 'Cash on Delivery', text: 'Pay when your order arrives, anywhere in Pakistan.' },
           ].map(({ icon: Icon, title, text }) => (
             <div key={title} className="flex gap-5 border-line p-8 [&:not(:last-child)]:border-b sm:[&:not(:last-child)]:border-b-0 sm:[&:not(:last-child)]:border-r lg:p-10">
               <Icon className="h-6 w-6 shrink-0" strokeWidth={1.4} />

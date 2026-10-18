@@ -20,7 +20,7 @@ export function LoginForm({ next, notice }: { next?: string; notice?: string }) 
             key={m}
             type="button"
             onClick={() => setMode(m)}
-            className={cn('h-11 font-display text-[11px] uppercase tracking-label', mode === m ? 'bg-fg font-bold text-bg' : 'text-muted hover:text-fg')}
+            className={cn('h-11 font-display text-[11px] uppercase tracking-label', mode === m ? 'bg-brand font-bold text-brand-ink' : 'text-muted hover:text-fg')}
           >
             {m === 'signin' ? 'Sign in' : 'Create owner account'}
           </button>

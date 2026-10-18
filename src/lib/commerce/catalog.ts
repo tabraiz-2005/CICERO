@@ -29,7 +29,11 @@ function db(): SupabaseClient | null {
 }
 
 function logError(scope: string, error: unknown) {
-  console.error(`[catalog] ${scope}:`, error);
+  const msg = (error as { message?: string })?.message || JSON.stringify(error);
+  console.warn(
+    `[catalog] Could not load ${scope}: ${msg}\n` +
+      '→ If the database is new, run supabase/setup.sql in Supabase → SQL Editor.'
+  );
 }
 
 /* -------------------------------------------------------------------------- */

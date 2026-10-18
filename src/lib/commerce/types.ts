@@ -143,27 +143,31 @@ export interface StoreSettings {
   low_stock_threshold: number;
   contact_email: string;
   contact_phone: string | null;
+  contact_phone_2: string | null;
+  address: string | null;
   instagram_url: string | null;
   tiktok_url: string | null;
 }
 
 export const DEFAULT_SETTINGS: StoreSettings = {
   store_name: 'Cicero',
-  tagline: 'Outerwear & Knitwear',
+  tagline: 'we make you more beautiful',
   announcement_enabled: true,
-  announcement_text: 'Free shipping on orders over $300',
+  announcement_text: 'Free delivery across Pakistan on orders over Rs 15,000 · Cash on Delivery available',
   hero_eyebrow: 'Autumn / Winter Campaign',
-  hero_title: 'CICERO',
+  hero_title: 'The Winter Edit',
   hero_subtitle: 'Wool coats, jackets and knitwear cut for the cold months.',
   hero_image_url: null,
   hero_cta_label: 'Shop the collection',
   hero_cta_href: '/shop',
-  standard_shipping_amount: 1500,
-  express_shipping_amount: 3500,
-  free_shipping_threshold: 30000,
+  standard_shipping_amount: 25000,
+  express_shipping_amount: 50000,
+  free_shipping_threshold: 1500000,
   low_stock_threshold: 5,
   contact_email: 'care@cicero.store',
-  contact_phone: null,
-  instagram_url: null,
+  contact_phone: '03207110919',
+  contact_phone_2: '03706157560',
+  address: 'Main Market, Satellite Town, Gujranwala',
+  instagram_url: 'https://www.instagram.com/cicero.com.pk',
   tiktok_url: null,
 };

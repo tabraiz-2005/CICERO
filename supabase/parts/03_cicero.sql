@@ -44,17 +44,17 @@ revoke all on table public.admin_users from anon, authenticated;
 create table if not exists public.store_settings (
   id integer primary key default 1 check (id = 1),
   store_name text not null default 'Cicero',
-  tagline text not null default 'Outerwear & Knitwear',
+  tagline text not null default 'Coats · Jackets · Knitwear',
   announcement_enabled boolean not null default true,
-  announcement_text text not null default 'Free shipping on orders over $300',
+  announcement_text text not null default 'Free delivery across Pakistan on orders over Rs 15,000 · Cash on Delivery available',
   hero_eyebrow text not null default 'Autumn / Winter Campaign',
-  hero_title text not null default 'CICERO',
+  hero_title text not null default 'The Winter Edit',
   hero_subtitle text not null default 'Wool coats, jackets and knitwear cut for the cold months.',
   hero_image_url text,
   hero_cta_label text not null default 'Shop the collection',
   hero_cta_href text not null default '/shop',
-  standard_shipping_amount integer not null default 1500 check (standard_shipping_amount >= 0),
-  express_shipping_amount integer not null default 3500 check (express_shipping_amount >= 0),
+  standard_shipping_amount integer not null default 25000 check (standard_shipping_amount >= 0),
+  express_shipping_amount integer not null default 50000 check (express_shipping_amount >= 0),
   free_shipping_threshold integer check (free_shipping_threshold is null or free_shipping_threshold >= 0),
   low_stock_threshold integer not null default 5 check (low_stock_threshold >= 0),
   contact_email text not null default 'care@cicero.store',
@@ -64,7 +64,7 @@ create table if not exists public.store_settings (
   updated_at timestamptz not null default now()
 );
 alter table public.store_settings add column if not exists free_shipping_threshold integer;
-insert into public.store_settings (id, free_shipping_threshold) values (1, 30000) on conflict (id) do nothing;
+insert into public.store_settings (id, free_shipping_threshold) values (1, 1500000) on conflict (id) do nothing;
 
 drop trigger if exists store_settings_set_updated_at on public.store_settings;
 create trigger store_settings_set_updated_at before update on public.store_settings

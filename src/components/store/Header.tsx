@@ -9,6 +9,7 @@ import { useWishlist } from '@/context/WishlistContext';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { cn } from '@/lib/utils';
 import { SearchOverlay } from './SearchOverlay';
+import { Logo } from './Logo';
 
 export interface NavCategory {
   slug: string;
@@ -49,8 +50,8 @@ function NavLinks({ categories, onNavigate, vertical }: { categories: NavCategor
               ? 'border-b border-line py-5 text-2xl font-bold tracking-[0.08em]'
               : cn(
                   'whitespace-nowrap text-[13px] font-medium tracking-label',
-                  i >= 3 && 'hidden xl:inline',
-                  i >= 5 && 'xl:hidden min-[1800px]:inline'
+                  i >= 2 && 'hidden min-[1440px]:inline',
+                  i >= 4 && 'min-[1440px]:hidden min-[1800px]:inline'
                 ),
             l.active ? 'text-fg' : vertical ? 'text-fg' : 'text-fg/75'
           )}
@@ -114,10 +115,10 @@ export function Header({ storeName, categories }: { storeName: string; categorie
 
           <Link
             href="/"
-            className="pl-[0.42em] font-display text-[22px] font-bold uppercase tracking-logo sm:text-[26px] lg:text-[34px]"
+            className="block text-fg"
             aria-label={`${storeName} home`}
           >
-            {storeName}
+            <Logo title={storeName} className="w-[118px] sm:w-[140px] lg:w-[160px] min-[1440px]:w-[188px]" />
           </Link>
 
           <div className="flex items-center justify-end gap-1 sm:gap-3 lg:gap-6">
@@ -143,7 +144,7 @@ export function Header({ storeName, categories }: { storeName: string; categorie
       {menuOpen && (
         <div className="fixed inset-0 z-50 flex flex-col bg-bg animate-fade-in lg:hidden">
           <div className="site-x flex h-[72px] items-center justify-between border-b border-line">
-            <span className="pl-[0.42em] font-display text-[22px] font-bold uppercase tracking-logo">{storeName}</span>
+            <Logo title={storeName} className="w-[118px]" />
             <button className="-mr-2 p-2" aria-label="Close menu" onClick={() => setMenuOpen(false)}>
               <X className="h-6 w-6" strokeWidth={1.5} />
             </button>

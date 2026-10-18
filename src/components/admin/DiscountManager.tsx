@@ -91,10 +91,10 @@ export function DiscountManager({ rows }: { rows: DiscountRow[] }) {
                 <option value="fixed">Fixed amount off</option>
               </select>
             </Field>
-            <Field label={edit.type === 'percent' ? 'Percent off' : 'Amount off ($)'}>
+            <Field label={edit.type === 'percent' ? 'Percent off' : 'Amount off (Rs)'}>
               <input type="number" min={1} max={edit.type === 'percent' ? 100 : undefined} value={edit.value} onChange={(e) => setEdit({ ...edit, value: Number(e.target.value) })} className="field" />
             </Field>
-            <Field label="Minimum spend ($)">
+            <Field label="Minimum spend (Rs)">
               <input type="number" min={0} value={edit.minSubtotal} onChange={(e) => setEdit({ ...edit, minSubtotal: Number(e.target.value) })} className="field" />
             </Field>
             <Field label="Total uses allowed" hint="Empty = unlimited">

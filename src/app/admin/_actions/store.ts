@@ -170,6 +170,8 @@ export async function saveSettings(s: Partial<StoreSettings>): Promise<ActionRes
       low_stock_threshold: Math.max(0, Math.floor(Number(s.low_stock_threshold) || 0)),
       contact_email: text(s.contact_email),
       contact_phone: text(s.contact_phone) || null,
+      contact_phone_2: text(s.contact_phone_2) || null,
+      address: text(s.address) || null,
       instagram_url: url(s.instagram_url),
       tiktok_url: url(s.tiktok_url),
     };

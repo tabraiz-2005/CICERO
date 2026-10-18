@@ -8,15 +8,16 @@
 :root,
 [data-theme='dark'] {
   color-scheme: dark;
-  --bg: 11 12 15;
-  --surface: 20 22 26;
-  --surface-2: 27 29 34;
-  --line: 40 43 49;
-  --line-strong: 62 66 74;
-  --fg: 243 244 246;
-  --muted: 140 145 154;
-  --subtle: 96 100 108;
-  --accent: 74 59 39;
+  --bg: 20 18 19;
+  --surface: 30 28 29;
+  --surface-2: 39 36 37;
+  --line: 54 50 52;
+  --line-strong: 78 73 75;
+  --fg: 246 244 245;
+  --muted: 150 144 147;
+  --subtle: 104 99 101;
+  --brand: 236 0 139;
+  --brand-ink: 255 255 255;
   --gold: 226 168 44;
   --danger: 232 93 93;
   --success: 92 186 128;
@@ -25,15 +26,16 @@
 
 [data-theme='light'] {
   color-scheme: light;
-  --bg: 244 243 240;
-  --surface: 234 232 227;
-  --surface-2: 225 223 217;
-  --line: 214 211 204;
-  --line-strong: 182 178 170;
-  --fg: 12 13 16;
-  --muted: 92 96 104;
-  --subtle: 138 140 146;
-  --accent: 74 59 39;
+  --bg: 247 245 246;
+  --surface: 238 235 237;
+  --surface-2: 229 225 227;
+  --line: 218 213 216;
+  --line-strong: 186 180 183;
+  --fg: 20 18 19;
+  --muted: 96 91 94;
+  --subtle: 140 135 138;
+  --brand: 214 0 126;
+  --brand-ink: 255 255 255;
   --gold: 176 120 18;
   --danger: 190 50 50;
   --success: 32 130 72;
@@ -49,7 +51,7 @@
     font-feature-settings: 'ss01', 'cv11';
   }
   ::selection {
-    @apply bg-fg text-bg;
+    @apply bg-brand text-brand-ink;
   }
   :focus-visible {
     outline: 1px solid rgb(var(--fg));
@@ -82,22 +84,22 @@
     @apply bg-surface-2;
   }
   .chip-active {
-    @apply border-fg bg-fg font-bold text-bg hover:text-bg;
+    @apply border-brand bg-brand font-bold text-brand-ink hover:text-brand-ink;
   }
   .btn {
     @apply inline-flex items-center justify-center gap-3 font-display text-xs font-bold uppercase tracking-label transition-colors disabled:cursor-not-allowed disabled:opacity-40;
   }
   .btn-primary {
-    @apply btn h-14 bg-fg px-8 text-bg hover:bg-fg/85;
+    @apply btn h-14 bg-brand px-8 text-brand-ink hover:bg-brand/85;
   }
   .btn-outline {
-    @apply btn h-14 border border-line-strong px-8 text-fg hover:border-fg;
+    @apply btn h-14 border border-line-strong px-8 text-fg hover:border-brand hover:text-brand;
   }
   .btn-ghost {
     @apply btn h-10 px-4 text-muted hover:text-fg;
   }
   .field {
-    @apply h-12 w-full border border-line bg-surface px-4 text-sm text-fg placeholder:text-subtle focus:border-fg focus:outline-none;
+    @apply h-12 w-full border border-line bg-surface px-4 text-sm text-fg placeholder:text-subtle focus:border-brand focus:outline-none;
   }
   .field-label {
     @apply mb-2 block font-display text-[11px] uppercase tracking-label text-muted;

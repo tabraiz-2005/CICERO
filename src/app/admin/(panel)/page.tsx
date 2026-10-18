@@ -40,7 +40,7 @@ export default async function Dashboard() {
 
   const [{ data: paid }, { data: recent }, { data: settings }, { data: variants }, { count: activeProducts }, { count: toFulfil }] =
     await Promise.all([
-      admin.from('orders').select('total_amount, paid_at').eq('payment_status', 'paid').gte('paid_at', since.toISOString()),
+      admin.from('orders').select('total_amount, created_at').eq('status', 'confirmed').gte('created_at', since.toISOString()),
       admin
         .from('orders')
         .select('id, order_number, customer_first_name, customer_last_name, total_amount, payment_status, fulfillment_status, created_at')
@@ -55,7 +55,7 @@ export default async function Dashboard() {
         .order('inventory_quantity')
         .limit(400),
       admin.from('products').select('id', { count: 'exact', head: true }).eq('status', 'active'),
-      admin.from('orders').select('id', { count: 'exact', head: true }).eq('payment_status', 'paid').in('fulfillment_status', ['unfulfilled', 'processing']),
+      admin.from('orders').select('id', { count: 'exact', head: true }).eq('status', 'confirmed').in('fulfillment_status', ['unfulfilled', 'processing']),
     ]);
 
   const threshold = settings?.low_stock_threshold ?? 5;
@@ -67,7 +67,7 @@ export default async function Dashboard() {
     return { date: d.toISOString().slice(0, 10), cents: 0, orders: 0 };
   });
   for (const o of paid ?? []) {
-    const key = new Date(o.paid_at).toISOString().slice(0, 10);
+    const key = new Date(o.created_at).toISOString().slice(0, 10);
     const day = days.find((d) => d.date === key);
     if (day) {
       day.cents += o.total_amount;
@@ -94,14 +94,14 @@ export default async function Dashboard() {
         {problems.length > 0 && <SetupCard checks={checks} compact />}
 
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-          <Stat label="Revenue · 30 days" value={formatCents(revenue)} sub={`${count} paid order${count === 1 ? '' : 's'}`} />
+          <Stat label="Sales · 30 days" value={formatCents(revenue)} sub={`${count} order${count === 1 ? '' : 's'} (excl. cancelled)`} />
           <Stat label="Average order" value={count ? formatCents(Math.round(revenue / count)) : '—'} sub="Last 30 days" />
-          <Stat label="To fulfil" value={String(toFulfil ?? 0)} sub="Paid, not yet shipped" href="/admin/orders?view=to-fulfil" />
+          <Stat label="To fulfil" value={String(toFulfil ?? 0)} sub="Not yet shipped" href="/admin/orders?view=to-fulfil" />
           <Stat label="Live products" value={String(activeProducts ?? 0)} sub={`${low.length} low · ${out} sold out variants`} href="/admin/inventory?filter=low" />
         </div>
 
-        <Card title="Revenue · last 30 days">
-          {revenue === 0 ? <p className="py-10 text-center text-sm text-muted">No paid orders in the last 30 days yet.</p> : <RevenueChart days={days} />}
+        <Card title="Sales · last 30 days">
+          {revenue === 0 ? <p className="py-10 text-center text-sm text-muted">No orders in the last 30 days yet.</p> : <RevenueChart days={days} />}
         </Card>
 
         <div className="grid gap-6 xl:grid-cols-[1.6fr_1fr]">
@@ -161,7 +161,7 @@ function SetupCard({ checks, compact }: { checks: Awaited<ReturnType<typeof runH
       <ul className="space-y-3">
         {list.map((c) => (
           <li key={c.label} className="flex items-start gap-3 text-sm">
-            {c.label === 'Stripe mode' ? (
+            {c.label === 'Payments' ? (
               <Info className="mt-0.5 h-4 w-4 shrink-0 text-muted" />
             ) : c.ok ? (
               <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" />
@@ -170,7 +170,7 @@ function SetupCard({ checks, compact }: { checks: Awaited<ReturnType<typeof runH
             )}
             <span>
               <span className="font-medium">{c.label}</span>
-              {(!c.ok || c.label === 'Stripe mode') && c.fix && <span className="block text-muted">{c.fix}</span>}
+              {(!c.ok || c.label === 'Payments') && c.fix && <span className="block text-muted">{c.fix}</span>}
             </span>
           </li>
         ))}

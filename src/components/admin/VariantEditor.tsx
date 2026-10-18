@@ -207,7 +207,7 @@ export function VariantEditor({
                 <tr className="text-left font-display text-[10px] uppercase tracking-label text-muted">
                   <th className="px-3 py-2.5 font-medium">Variant</th>
                   <th className="px-3 py-2.5 font-medium">Stock</th>
-                  <th className="px-3 py-2.5 font-medium">Price $</th>
+                  <th className="px-3 py-2.5 font-medium">Price Rs</th>
                   <th className="px-3 py-2.5 font-medium">SKU</th>
                   <th className="px-3 py-2.5 font-medium">Photo</th>
                   <th className="px-3 py-2.5 font-medium">On sale</th>

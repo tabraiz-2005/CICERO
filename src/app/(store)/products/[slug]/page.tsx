@@ -46,7 +46,7 @@ export default async function ProductPage({ params }: Props) {
     image: product.images.map((i) => i.url),
     offers: {
       '@type': 'Offer',
-      priceCurrency: 'USD',
+      priceCurrency: 'PKR',
       price: product.price,
       availability: product.totalStock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
     },

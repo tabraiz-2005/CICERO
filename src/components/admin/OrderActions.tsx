@@ -1,27 +1,32 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Loader2 } from 'lucide-react';
+import { Loader2, MessageCircle } from 'lucide-react';
 import { useState, useTransition } from 'react';
-import { cancelUnpaidOrder, refundOrder, updateOrder } from '@/app/admin/_actions/orders';
+import { cancelOrder, restockOrder, updateOrder } from '@/app/admin/_actions/orders';
 import { Field, Notice } from './FormBits';
 
 type F = 'unfulfilled' | 'processing' | 'shipped' | 'delivered' | 'returned' | 'cancelled';
 
 export function OrderActions({
   id,
+  isCod,
   paid,
-  pending: isPendingOrder,
+  active,
+  whatsappConfirm,
+  whatsappShipped,
   initial,
 }: {
   id: string;
+  isCod: boolean;
   paid: boolean;
-  pending: boolean;
-  initial: { fulfillmentStatus: F; trackingNumber: string; trackingUrl: string; adminNotes: string };
+  active: boolean;
+  whatsappConfirm: string | null;
+  whatsappShipped: string | null;
+  initial: { fulfillmentStatus: F; trackingNumber: string; trackingUrl: string; adminNotes: string; confirmedByPhone: boolean };
 }) {
   const router = useRouter();
   const [f, setF] = useState(initial);
-  const [restock, setRestock] = useState(true);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [busy, start] = useTransition();
 
@@ -32,10 +37,43 @@ export function OrderActions({
       router.refresh();
     });
 
+  if (!active) {
+    return (
+      <div className="space-y-3">
+        {msg && <Notice kind={msg.ok ? 'success' : 'error'}>{msg.text}</Notice>}
+        <p className="text-sm text-muted">This order is closed. No further actions.</p>
+      </div>
+    );
+  }
+
+  const canShip = isCod || paid;
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {msg && <Notice kind={msg.ok ? 'success' : 'error'}>{msg.text}</Notice>}
-      {paid && (
+
+      {isCod && (
+        <div className="space-y-3 border-b border-line pb-5">
+          <p className="field-label">1 · Confirm with the customer</p>
+          {whatsappConfirm && (
+            <a href={whatsappConfirm} target="_blank" rel="noreferrer" className="btn-outline h-10 w-full">
+              <MessageCircle className="h-4 w-4" /> Confirm on WhatsApp
+            </a>
+          )}
+          <label className="flex items-center gap-3 text-sm">
+            <input
+              type="checkbox"
+              checked={f.confirmedByPhone}
+              onChange={(e) => setF({ ...f, confirmedByPhone: e.target.checked })}
+              className="h-4 w-4 accent-current"
+            />
+            Customer confirmed the order
+          </label>
+          <p className="text-xs text-subtle">Confirming COD orders before dispatch cuts fake orders and refused parcels.</p>
+        </div>
+      )}
+
+      {canShip && (
         <form
           className="space-y-4"
           onSubmit={(e) => {
@@ -43,22 +81,24 @@ export function OrderActions({
             run(() => updateOrder(id, f));
           }}
         >
-          <Field label="Fulfilment">
+          {isCod && <p className="field-label !mb-0">2 · Ship it</p>}
+          <Field label="Status">
             <select value={f.fulfillmentStatus} onChange={(e) => setF({ ...f, fulfillmentStatus: e.target.value as F })} className="field">
-              <option value="unfulfilled">Unfulfilled</option>
+              <option value="unfulfilled">New — not packed</option>
               <option value="processing">Packing</option>
-              <option value="shipped">Shipped</option>
-              <option value="delivered">Delivered</option>
-              <option value="returned">Returned</option>
-              <option value="cancelled">Cancelled</option>
+              <option value="shipped">Shipped (with courier)</option>
+              <option value="delivered">{isCod ? 'Delivered — cash received' : 'Delivered'}</option>
+              <option value="returned">Returned / refused</option>
             </select>
           </Field>
-          <Field label="Tracking number">
-            <input value={f.trackingNumber} onChange={(e) => setF({ ...f, trackingNumber: e.target.value })} className="field" />
-          </Field>
-          <Field label="Tracking link">
-            <input value={f.trackingUrl} onChange={(e) => setF({ ...f, trackingUrl: e.target.value })} className="field" placeholder="https://…" />
-          </Field>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Field label="Courier tracking number">
+              <input value={f.trackingNumber} onChange={(e) => setF({ ...f, trackingNumber: e.target.value })} className="field" placeholder="TCS / Leopards / PostEx #" />
+            </Field>
+            <Field label="Tracking link (optional)">
+              <input value={f.trackingUrl} onChange={(e) => setF({ ...f, trackingUrl: e.target.value })} className="field" placeholder="https://…" />
+            </Field>
+          </div>
           <Field label="Internal notes" hint="Only visible to admins.">
             <textarea rows={3} value={f.adminNotes} onChange={(e) => setF({ ...f, adminNotes: e.target.value })} className="field h-auto py-3" />
           </Field>
@@ -67,47 +107,49 @@ export function OrderActions({
               {busy && <Loader2 className="h-4 w-4 animate-spin" />} Save
             </button>
             {f.fulfillmentStatus !== 'shipped' && f.fulfillmentStatus !== 'delivered' && (
-              <button type="button" disabled={busy} className="btn-outline h-10 px-4" onClick={() => run(() => updateOrder(id, { ...f, fulfillmentStatus: 'shipped' }))}>
+              <button type="button" disabled={busy} className="btn-outline h-10 px-4" onClick={() => {
+                  const next = { ...f, fulfillmentStatus: 'shipped' as F };
+                  setF(next);
+                  run(() => updateOrder(id, next));
+                }}>
                 Mark shipped
               </button>
             )}
+            {f.fulfillmentStatus === 'shipped' && (
+              <button type="button" disabled={busy} className="btn-outline h-10 px-4" onClick={() => {
+                  const next = { ...f, fulfillmentStatus: 'delivered' as F };
+                  setF(next);
+                  run(() => updateOrder(id, next));
+                }}>
+                {isCod ? 'Delivered & cash received' : 'Mark delivered'}
+              </button>
+            )}
           </div>
+          {whatsappShipped && f.trackingNumber && (
+            <a href={whatsappShipped} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-xs text-muted underline underline-offset-4 hover:text-fg">
+              <MessageCircle className="h-3.5 w-3.5" /> Send tracking to customer on WhatsApp
+            </a>
+          )}
         </form>
       )}
 
-      {paid && (
-        <div className="border-t border-line pt-4">
-          <p className="field-label">Refund</p>
-          <label className="mb-3 flex items-center gap-2 text-sm">
-            <input type="checkbox" checked={restock} onChange={(e) => setRestock(e.target.checked)} className="h-4 w-4 accent-current" />
-            Return items to stock
-          </label>
+      <div className="flex flex-wrap gap-2 border-t border-line pt-4">
+        {!paid && (
           <button
             type="button"
             disabled={busy}
-            onClick={() => confirm('Refund the full amount to the customer through Stripe? This cannot be undone.') && run(() => refundOrder(id, restock))}
+            onClick={() => confirm('Cancel this order and return its items to stock?') && run(() => cancelOrder(id))}
             className="btn h-10 border border-danger/50 px-4 text-danger hover:bg-danger/10"
           >
-            Refund full amount
+            Cancel order
           </button>
-        </div>
-      )}
-
-      {!paid && isPendingOrder && (
-        <div>
-          <p className="mb-3 text-sm text-muted">
-            The customer started checkout but hasn’t paid. Stock is held for 40 minutes, then released automatically when Stripe expires the session.
-          </p>
-          <button
-            type="button"
-            disabled={busy}
-            onClick={() => confirm('Cancel this unpaid order and release its stock?') && run(() => cancelUnpaidOrder(id))}
-            className="btn-outline h-10 px-4"
-          >
-            Cancel & release stock
+        )}
+        {f.fulfillmentStatus === 'returned' && (
+          <button type="button" disabled={busy} onClick={() => run(() => restockOrder(id))} className="btn-outline h-10 px-4">
+            Return items to stock
           </button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

@@ -292,7 +292,7 @@ export function ProductForm({
 
             <Section title="Pricing">
               <div className="grid grid-cols-2 gap-3">
-                <Field label="Price (USD)">
+                <Field label="Price (Rs)">
                   <input inputMode="decimal" value={f.price} onChange={(e) => set('price', e.target.value.replace(/[^\d.]/g, ''))} required className="field" />
                 </Field>
                 <Field label="Compare at" hint="Optional sale strikethrough">

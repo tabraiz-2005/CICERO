@@ -11,7 +11,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
     const { count } = await getSupabaseAdmin()
       .from('orders')
       .select('id', { count: 'exact', head: true })
-      .eq('payment_status', 'paid')
+      .eq('status', 'confirmed')
       .in('fulfillment_status', ['unfulfilled', 'processing']);
     pending = count ?? 0;
   } catch {

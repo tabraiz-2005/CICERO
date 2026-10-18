@@ -5,8 +5,9 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-/** Format a whole-currency amount (e.g. 690 → "$690"). */
-export function formatPrice(amount: number, currency = 'USD'): string {
+/** Format a whole-currency amount (e.g. 34500 → "Rs 34,500"). */
+export function formatPrice(amount: number, currency = 'PKR'): string {
+  if (currency === 'PKR') return `Rs ${Math.round(amount).toLocaleString('en-US')}`;
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency,
@@ -16,7 +17,7 @@ export function formatPrice(amount: number, currency = 'USD'): string {
 }
 
 /** Format an amount stored in cents (orders, settings). */
-export function formatCents(cents: number, currency = 'USD'): string {
+export function formatCents(cents: number, currency = 'PKR'): string {
   return formatPrice(cents / 100, currency);
 }
 

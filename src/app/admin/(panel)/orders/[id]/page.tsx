@@ -7,6 +7,7 @@ import { Badge, Card, PageBody, statusTone } from '@/components/admin/Page';
 import { OrderActions } from '@/components/admin/OrderActions';
 import { GarmentArt } from '@/components/store/GarmentArt';
 import { COUNTRIES } from '@/lib/countries';
+import { formatPkPhone, whatsappLink } from '@/lib/phone';
 import { formatCents } from '@/lib/utils';
 
 export const metadata = { title: 'Order' };
@@ -22,6 +23,16 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
   const a = (o.shipping_address ?? {}) as Record<string, string>;
   const country = COUNTRIES.find(([c]) => c === a.country)?.[1] ?? a.country;
   const stripeBase = `https://dashboard.stripe.com${env.stripeSecretKey.startsWith('sk_test') ? '/test' : ''}`;
+  const isCod = o.payment_method === 'cod';
+  const itemsText = (o.order_items ?? []).map((i: { quantity: number; title: string; size: string }) => `${i.quantity}× ${i.title} (${i.size})`).join(', ');
+  const waConfirm = whatsappLink(
+    o.customer_phone,
+    `Assalam o Alaikum ${o.customer_first_name}, this is Cicero. Please confirm your order ${o.order_number}: ${itemsText}. Total ${formatCents(o.total_amount)} (Cash on Delivery) to ${a.address}, ${a.city}. Reply YES to confirm.`
+  );
+  const waShipped = whatsappLink(
+    o.customer_phone,
+    `Hi ${o.customer_first_name}, your Cicero order ${o.order_number} is on its way!${o.tracking_number ? ` Tracking: ${o.tracking_number}` : ''}${o.tracking_url ? ` ${o.tracking_url}` : ''}`
+  );
   const timeline = [
     ['Created', o.created_at],
     ['Paid', o.paid_at],
@@ -44,6 +55,8 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
           <Badge tone={statusTone(o.payment_status)}>{o.payment_status}</Badge>
           <Badge tone={statusTone(o.fulfillment_status)}>{o.fulfillment_status}</Badge>
           {o.shipping_method === 'express' && <Badge tone="amber">Express</Badge>}
+          <Badge tone={isCod ? 'blue' : 'grey'}>{isCod ? 'Cash on delivery' : o.payment_method}</Badge>
+          {isCod && o.status === 'confirmed' && <Badge tone={o.confirmed_by_phone ? 'green' : 'amber'}>{o.confirmed_by_phone ? 'Customer confirmed' : 'Not confirmed yet'}</Badge>}
         </div>
       </div>
 
@@ -71,15 +84,17 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
                 <div className="flex justify-between"><dt className="text-muted">Subtotal</dt><dd>{formatCents(o.subtotal_amount)}</dd></div>
                 {o.discount_amount > 0 && <div className="flex justify-between"><dt className="text-muted">Discount {o.promo_code && `(${o.promo_code})`}</dt><dd>−{formatCents(o.discount_amount)}</dd></div>}
                 <div className="flex justify-between"><dt className="text-muted">Shipping ({o.shipping_method})</dt><dd>{o.shipping_amount ? formatCents(o.shipping_amount) : 'Free'}</dd></div>
-                <div className="flex justify-between border-t border-line pt-2 font-display font-bold"><dt>Total</dt><dd>{formatCents(o.total_amount, o.currency)}</dd></div>
+                <div className="flex justify-between border-t border-line pt-2 font-display font-bold"><dt>{isCod && o.payment_status !== 'paid' ? 'To collect (COD)' : 'Total'}</dt><dd>{formatCents(o.total_amount, o.currency)}</dd></div>
               </dl>
             </Card>
 
             <div className="grid gap-6 md:grid-cols-2">
               <Card title="Customer">
                 <p className="font-medium">{o.customer_first_name} {o.customer_last_name}</p>
-                <a href={`mailto:${o.customer_email}`} className="mt-1 block text-sm underline underline-offset-4">{o.customer_email}</a>
-                {o.customer_phone && <a href={`tel:${o.customer_phone}`} className="mt-1 block text-sm text-muted">{o.customer_phone}</a>}
+                {o.customer_phone && <a href={`tel:${o.customer_phone}`} className="mt-1 block font-display text-base">{formatPkPhone(o.customer_phone)}</a>}
+                {waConfirm && <a href={waConfirm} target="_blank" rel="noreferrer" className="mt-1 block text-sm text-success underline underline-offset-4">WhatsApp</a>}
+                {o.customer_email && <a href={`mailto:${o.customer_email}`} className="mt-1 block text-sm text-muted underline underline-offset-4">{o.customer_email}</a>}
+                {o.gift_message && <p className="mt-3 border-t border-line pt-3 text-sm"><span className="text-muted">Customer note: </span>{o.gift_message}</p>}
               </Card>
               <Card title="Ship to">
                 <address className="text-sm not-italic leading-relaxed">
@@ -87,6 +102,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
                   {a.address}{a.address2 && <>, {a.address2}</>}<br />
                   {a.city}{a.region && `, ${a.region}`} {a.postalCode}<br />
                   {country}
+                  {o.customer_phone && <><br />{formatPkPhone(o.customer_phone)}</>}
                 </address>
               </Card>
             </div>
@@ -110,22 +126,22 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
             </Card>
           </div>
 
-          <Card title={o.payment_status === 'paid' ? 'Fulfil order' : 'Order actions'} className="h-fit">
-            {o.status === 'cancelled' || o.status === 'refunded' ? (
-              <p className="text-sm text-muted">This order is {o.status}. No further actions.</p>
-            ) : (
-              <OrderActions
-                id={o.id}
-                paid={o.payment_status === 'paid'}
-                pending={o.status === 'pending'}
-                initial={{
-                  fulfillmentStatus: o.fulfillment_status,
-                  trackingNumber: o.tracking_number ?? '',
-                  trackingUrl: o.tracking_url ?? '',
-                  adminNotes: o.admin_notes ?? '',
-                }}
-              />
-            )}
+          <Card title="Fulfil order" className="h-fit">
+            <OrderActions
+              id={o.id}
+              isCod={isCod}
+              paid={o.payment_status === 'paid'}
+              active={o.status === 'confirmed'}
+              whatsappConfirm={waConfirm}
+              whatsappShipped={waShipped}
+              initial={{
+                fulfillmentStatus: o.fulfillment_status,
+                trackingNumber: o.tracking_number ?? '',
+                trackingUrl: o.tracking_url ?? '',
+                adminNotes: o.admin_notes ?? '',
+                confirmedByPhone: Boolean(o.confirmed_by_phone),
+              }}
+            />
           </Card>
         </div>
       </PageBody>

@@ -116,7 +116,7 @@ export async function saveProduct(p: ProductPayload): Promise<ActionResult<{ id:
       description: p.description.trim(),
       price,
       compare_at_price: compare,
-      currency: 'USD',
+      currency: 'PKR',
       gender: ['men', 'women', 'unisex'].includes(p.gender) ? p.gender : 'unisex',
       category_id: p.categoryId || null,
       collection_id: p.collectionId || null,

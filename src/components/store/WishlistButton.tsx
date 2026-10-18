@@ -19,11 +19,11 @@ export function WishlistButton({ product, className }: { product: Product; class
         toggleWishlist(product);
       }}
       className={cn(
-        'flex h-[52px] w-[52px] items-center justify-center rounded-full bg-[#111216]/90 text-white backdrop-blur transition-transform hover:scale-105',
+        'flex h-[52px] w-[52px] items-center justify-center rounded-full bg-[#141213]/90 text-white backdrop-blur transition-transform hover:scale-105',
         className
       )}
     >
-      <Heart className={cn('h-5 w-5', on && 'fill-white')} strokeWidth={1.75} />
+      <Heart className={cn('h-5 w-5', on && 'fill-[#EC008B] text-[#EC008B]')} strokeWidth={1.75} />
     </button>
   );
 }

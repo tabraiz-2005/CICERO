@@ -93,11 +93,11 @@ export function SettingsForm({ initial }: { initial: StoreSettings }) {
         </div>
       </Section>
 
-      <Section title="Shipping" hint="Charged at checkout, in USD.">
+      <Section title="Shipping" hint="Charged at checkout, in Rupees.">
         <div className="grid gap-4 sm:grid-cols-3">
-          <Field label="Standard ($)"><input inputMode="decimal" value={ship.standard} onChange={(e) => setShip({ ...ship, standard: e.target.value })} className="field" /></Field>
-          <Field label="Express ($)"><input inputMode="decimal" value={ship.express} onChange={(e) => setShip({ ...ship, express: e.target.value })} className="field" /></Field>
-          <Field label="Free standard over ($)" hint="Empty = never free"><input inputMode="decimal" value={ship.free} onChange={(e) => setShip({ ...ship, free: e.target.value })} className="field" /></Field>
+          <Field label="Standard (Rs)"><input inputMode="decimal" value={ship.standard} onChange={(e) => setShip({ ...ship, standard: e.target.value })} className="field" /></Field>
+          <Field label="Express (Rs)"><input inputMode="decimal" value={ship.express} onChange={(e) => setShip({ ...ship, express: e.target.value })} className="field" /></Field>
+          <Field label="Free standard over (Rs)" hint="Empty = never free"><input inputMode="decimal" value={ship.free} onChange={(e) => setShip({ ...ship, free: e.target.value })} className="field" /></Field>
         </div>
       </Section>
 
@@ -110,7 +110,9 @@ export function SettingsForm({ initial }: { initial: StoreSettings }) {
       <Section title="Contact & social">
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Customer email"><input type="email" {...t('contact_email')} className="field" /></Field>
-          <Field label="Phone (optional)"><input {...t('contact_phone')} className="field" /></Field>
+          <Field label="WhatsApp / phone 1" hint="Used for the WhatsApp button on the store"><input {...t('contact_phone')} className="field" placeholder="0320 7110919" /></Field>
+          <Field label="WhatsApp / phone 2 (optional)"><input {...t('contact_phone_2')} className="field" placeholder="0370 6157560" /></Field>
+          <Field label="Shop address" className="sm:col-span-2"><input {...t('address')} className="field" placeholder="Main Market, Satellite Town, Gujranwala" /></Field>
           <Field label="Instagram URL"><input {...t('instagram_url')} className="field" placeholder="instagram.com/cicero" /></Field>
           <Field label="TikTok URL"><input {...t('tiktok_url')} className="field" /></Field>
         </div>

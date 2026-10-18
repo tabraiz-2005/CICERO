@@ -37,7 +37,7 @@ export function ProductCard({ product, priority }: { product: Product; priority?
         )}
 
         {badge && (
-          <span className="absolute left-3 top-3 bg-[#0B0C0F] px-4 py-2 font-display text-[10px] font-bold uppercase tracking-label text-white sm:left-[22px] sm:top-[22px] sm:text-[11px]">
+          <span className="absolute left-3 top-3 bg-[#141213] px-4 py-2 font-display text-[10px] font-bold uppercase tracking-label text-white sm:left-[22px] sm:top-[22px] sm:text-[11px]">
             {badge}
           </span>
         )}

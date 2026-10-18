@@ -3,6 +3,7 @@ import { Download } from 'lucide-react';
 import { getSupabaseAdmin } from '@/lib/supabase/admin';
 import { Badge, Empty, PageBody, PageHeader, statusTone, td, th } from '@/components/admin/Page';
 import { cn, formatCents } from '@/lib/utils';
+import { formatPkPhone } from '@/lib/phone';
 
 export const metadata = { title: 'Orders' };
 
@@ -10,7 +11,8 @@ const VIEWS = [
   { v: 'to-fulfil', label: 'To fulfil' },
   { v: 'shipped', label: 'Shipped' },
   { v: 'delivered', label: 'Delivered' },
-  { v: 'unpaid', label: 'Unpaid' },
+  { v: 'cod-unconfirmed', label: 'COD to confirm' },
+  { v: 'unpaid', label: 'Card unpaid' },
   { v: 'closed', label: 'Cancelled / refunded' },
   { v: 'all', label: 'All' },
 ];
@@ -23,18 +25,20 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
 
   let q = getSupabaseAdmin()
     .from('orders')
-    .select('id, order_number, customer_email, customer_first_name, customer_last_name, total_amount, currency, payment_status, fulfillment_status, shipping_method, created_at, order_items(quantity)', { count: 'exact' })
+    .select('id, order_number, customer_email, customer_first_name, customer_last_name, customer_phone, total_amount, currency, payment_status, payment_method, confirmed_by_phone, fulfillment_status, shipping_method, created_at, order_items(quantity)', { count: 'exact' })
     .order('created_at', { ascending: false })
     .range((page - 1) * per, page * per - 1);
 
-  if (view === 'to-fulfil') q = q.eq('payment_status', 'paid').in('fulfillment_status', ['unfulfilled', 'processing']);
+  if (view === 'to-fulfil') q = q.eq('status', 'confirmed').in('fulfillment_status', ['unfulfilled', 'processing']);
+  if (view === 'cod-unconfirmed') q = q.eq('status', 'confirmed').eq('payment_method', 'cod').eq('confirmed_by_phone', false).in('fulfillment_status', ['unfulfilled', 'processing']);
   if (view === 'shipped') q = q.eq('fulfillment_status', 'shipped');
   if (view === 'delivered') q = q.eq('fulfillment_status', 'delivered');
-  if (view === 'unpaid') q = q.in('payment_status', ['unpaid', 'processing', 'failed']).eq('status', 'pending');
+  if (view === 'unpaid') q = q.neq('payment_method', 'cod').in('payment_status', ['unpaid', 'processing', 'failed']).eq('status', 'pending');
   if (view === 'closed') q = q.in('status', ['cancelled', 'refunded']);
   if (sp.q) {
     const term = sp.q.replace(/[%,()]/g, '').trim();
-    q = q.or(`order_number.ilike.%${term}%,customer_email.ilike.%${term}%,customer_last_name.ilike.%${term}%`);
+    const phoneDigits = term.replace(/\D/g, '').replace(/^0/, '');
+    q = q.or(`order_number.ilike.%${term}%,customer_email.ilike.%${term}%,customer_last_name.ilike.%${term}%${phoneDigits.length >= 6 ? `,customer_phone.ilike.%${phoneDigits}%` : ''}`);
   }
   const { data: orders, count, error } = await q;
   const pages = Math.max(1, Math.ceil((count ?? 0) / per));
@@ -50,7 +54,7 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
       <PageHeader
         eyebrow="Sales"
         title="Orders"
-        description="Paid orders appear under “To fulfil”. Mark them shipped with a tracking number once they leave."
+        description="New orders appear under “To fulfil”. Confirm Cash on Delivery orders by WhatsApp, then mark them shipped with the courier tracking number."
         actions={
           <a href={`/admin/orders-export?view=${view}`} className="btn-outline h-10 px-4">
             <Download className="h-4 w-4" /> Export CSV
@@ -68,7 +72,7 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
           </div>
           <form>
             <input type="hidden" name="view" value={view} />
-            <input name="q" defaultValue={sp.q} placeholder="Order number, email or surname" className="field h-10 w-72" />
+            <input name="q" defaultValue={sp.q} placeholder="Order number, phone or surname" className="field h-10 w-72" />
           </form>
         </div>
 
@@ -94,9 +98,14 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
                         {o.shipping_method === 'express' && <span className="ml-2 text-[10px] font-bold uppercase text-gold">Express</span>}
                       </td>
                       <td className={`${td} whitespace-nowrap text-muted`}>{new Date(o.created_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}</td>
-                      <td className={td}>{o.customer_first_name} {o.customer_last_name}<span className="block text-xs text-subtle">{o.customer_email}</span></td>
+                      <td className={td}>{o.customer_first_name} {o.customer_last_name}<span className="block text-xs text-subtle">{formatPkPhone(o.customer_phone) || o.customer_email}</span></td>
                       <td className={td}>{(o.order_items ?? []).reduce((n: number, i: { quantity: number }) => n + i.quantity, 0)}</td>
-                      <td className={td}><Badge tone={statusTone(o.payment_status)}>{o.payment_status}</Badge></td>
+                      <td className={td}>
+                        <div className="flex flex-wrap gap-1">
+                          {o.payment_method === 'cod' ? <Badge tone={o.payment_status === 'paid' ? 'green' : 'blue'}>{o.payment_status === 'paid' ? 'COD · collected' : 'COD'}</Badge> : <Badge tone={statusTone(o.payment_status)}>{o.payment_status}</Badge>}
+                          {o.payment_method === 'cod' && !o.confirmed_by_phone && ['unfulfilled', 'processing'].includes(o.fulfillment_status) && <Badge tone="amber">Confirm</Badge>}
+                        </div>
+                      </td>
                       <td className={td}><Badge tone={statusTone(o.fulfillment_status)}>{o.fulfillment_status}</Badge></td>
                       <td className={`${td} text-right font-display`}>{formatCents(o.total_amount, o.currency)}</td>
                     </tr>

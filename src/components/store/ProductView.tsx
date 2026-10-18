@@ -134,7 +134,7 @@ export function ProductView({
                 {compareAt && compareAt > price && (
                   <span className="mr-3 text-sm font-normal text-subtle line-through">{formatPrice(compareAt)}</span>
                 )}
-                {formatPrice(price)} USD
+                {formatPrice(price)}
               </p>
             </div>
 
@@ -149,7 +149,7 @@ export function ProductView({
                   className={cn(
                     'h-14 border font-display text-sm uppercase tracking-[0.12em] transition-colors sm:h-[66px] sm:text-base',
                     size === s
-                      ? 'border-fg bg-fg font-bold text-bg'
+                      ? 'border-brand bg-brand font-bold text-brand-ink'
                       : 'border-line bg-bg text-muted hover:border-line-strong hover:text-fg',
                     !available && 'cursor-not-allowed line-through opacity-35 hover:border-line hover:text-muted'
                   )}

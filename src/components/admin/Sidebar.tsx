@@ -22,6 +22,7 @@ import { useEffect, useState } from 'react';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { cn } from '@/lib/utils';
 import { signOut } from '@/app/admin/_actions/auth';
+import { Logo } from '@/components/store/Logo';
 
 const NAV = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
@@ -50,13 +51,13 @@ export function Sidebar({ email, role, pendingOrders }: { email: string; role: s
             href={href}
             className={cn(
               'flex items-center gap-3 px-3 py-2.5 font-display text-[12px] uppercase tracking-[0.16em] transition-colors',
-              active ? 'bg-fg font-semibold text-bg' : 'text-muted hover:bg-surface-2 hover:text-fg'
+              active ? 'bg-brand font-semibold text-brand-ink' : 'text-muted hover:bg-surface-2 hover:text-fg'
             )}
           >
             <Icon className="h-4 w-4" strokeWidth={1.6} />
             <span className="flex-1">{label}</span>
             {href === '/admin/orders' && pendingOrders > 0 && (
-              <span className={cn('px-1.5 py-0.5 text-[10px] font-bold', active ? 'bg-bg text-fg' : 'bg-gold text-black')}>{pendingOrders}</span>
+              <span className={cn('px-1.5 py-0.5 text-[10px] font-bold', active ? 'bg-brand-ink text-brand' : 'bg-brand text-brand-ink')}>{pendingOrders}</span>
             )}
           </Link>
         );
@@ -89,8 +90,8 @@ export function Sidebar({ email, role, pendingOrders }: { email: string; role: s
 
   const brand = (
     <div className="flex h-16 items-center justify-between border-b border-line px-5">
-      <Link href="/admin" className="font-display text-lg font-bold uppercase tracking-[0.32em]">
-        Cicero <span className="ml-1 text-[10px] font-medium tracking-label text-muted">Admin</span>
+      <Link href="/admin" className="flex items-center gap-3 text-fg">
+        <Logo className="w-[104px]" /> <span className="font-display text-[10px] font-medium uppercase tracking-label text-muted">Admin</span>
       </Link>
     </div>
   );
@@ -107,7 +108,7 @@ export function Sidebar({ email, role, pendingOrders }: { email: string; role: s
         <button onClick={() => setOpen(true)} aria-label="Open menu" className="-ml-2 p-2">
           <Menu className="h-5 w-5" />
         </button>
-        <span className="font-display text-base font-bold uppercase tracking-[0.32em]">Cicero</span>
+        <Logo className="w-[96px] text-fg" />
         <span className="w-9" />
       </div>
       {open && (

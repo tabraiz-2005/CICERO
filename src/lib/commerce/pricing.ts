@@ -1,6 +1,7 @@
 import 'server-only';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { StoreSettings } from './types';
+import { formatCents } from '@/lib/utils';
 
 export type ShippingMethod = 'standard' | 'express';
 
@@ -36,13 +37,13 @@ export async function evaluateDiscount(
   if (d.ends_at && new Date(d.ends_at).getTime() < now) return { error: 'This code has expired.' };
   if (d.usage_limit !== null && d.times_used >= d.usage_limit) return { error: 'This code has reached its usage limit.' };
   if (subtotalCents < d.min_subtotal)
-    return { error: `This code needs a minimum spend of $${(d.min_subtotal / 100).toFixed(0)}.` };
+    return { error: `This code needs a minimum spend of ${formatCents(d.min_subtotal)}.` };
 
   const amount =
     d.discount_type === 'percent'
       ? Math.round((subtotalCents * Math.min(100, d.value)) / 100)
       : Math.min(d.value, subtotalCents);
-  const label = d.discount_type === 'percent' ? `${d.value}% off` : `$${(d.value / 100).toFixed(0)} off`;
+  const label = d.discount_type === 'percent' ? `${d.value}% off` : `${formatCents(d.value)} off`;
   return { code, amount, label };
 }
 
