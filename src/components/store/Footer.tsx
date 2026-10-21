@@ -38,6 +38,7 @@ export function Footer({ settings, categories }: { settings: StoreSettings; cate
   ];
   const phones = [settings.contact_phone, settings.contact_phone_2].filter(Boolean) as string[];
   const instaHandle = settings.instagram_url?.replace(/^https?:\/\/(www\.)?instagram\.com\//, '').replace(/\/$/, '');
+  const tiktokHandle = settings.tiktok_url?.replace(/^https?:\/\/(www\.)?tiktok\.com\/@?/, '').replace(/[/?].*$/, '');
 
   return (
     <footer className="mt-24 border-t border-line">
@@ -80,6 +81,16 @@ export function Footer({ settings, categories }: { settings: StoreSettings; cate
                     <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" />
                   </svg>
                   @{instaHandle}
+                </a>
+              </li>
+            )}
+            {settings.tiktok_url && (
+              <li>
+                <a href={settings.tiktok_url} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-fg/85 hover:text-fg">
+                  <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 text-brand" fill="currentColor" aria-hidden>
+                    <path d="M16.6 2h-3.3v13.2a2.9 2.9 0 1 1-2.9-2.9c.3 0 .6 0 .9.1V9a6.3 6.3 0 1 0 5.3 6.2V8.6a8 8 0 0 0 4.4 1.3V6.6a4.6 4.6 0 0 1-4.4-4.6Z" />
+                  </svg>
+                  TikTok @{tiktokHandle}
                 </a>
               </li>
             )}

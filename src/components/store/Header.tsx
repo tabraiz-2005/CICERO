@@ -37,6 +37,7 @@ function NavLinks({ categories, onNavigate, vertical }: { categories: NavCategor
       active: pathname === '/shop' && params.get('category') === c.slug,
     })),
   ];
+  const contact = { href: '/contact', label: 'Contact', active: pathname === '/contact' };
   return (
     <>
       {links.map((l, i) => (
@@ -51,7 +52,8 @@ function NavLinks({ categories, onNavigate, vertical }: { categories: NavCategor
               : cn(
                   'whitespace-nowrap text-[13px] font-medium tracking-label',
                   i >= 2 && 'hidden min-[1440px]:inline',
-                  i >= 4 && 'min-[1440px]:hidden min-[1800px]:inline'
+                  i >= 3 && 'min-[1440px]:hidden min-[1800px]:inline',
+                  i >= 4 && 'min-[1800px]:hidden min-[2200px]:inline'
                 ),
             l.active ? 'text-fg' : vertical ? 'text-fg' : 'text-fg/75'
           )}
@@ -59,6 +61,19 @@ function NavLinks({ categories, onNavigate, vertical }: { categories: NavCategor
           {l.label}
         </Link>
       ))}
+      <Link
+        href={contact.href}
+        onClick={onNavigate}
+        className={cn(
+          'font-display uppercase transition-colors hover:text-fg',
+          vertical
+            ? 'border-b border-line py-5 text-2xl font-bold tracking-[0.08em]'
+            : 'whitespace-nowrap text-[13px] font-medium tracking-label',
+          contact.active ? 'text-fg' : vertical ? 'text-fg' : 'text-fg/75'
+        )}
+      >
+        {contact.label}
+      </Link>
     </>
   );
 }

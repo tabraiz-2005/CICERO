@@ -17,3 +17,9 @@ yarn-error.log*
 .vercel
 .env*
 Products/
+
+sweater images/
+*.png
+*.jpg
+*.jpeg
+!public/**
