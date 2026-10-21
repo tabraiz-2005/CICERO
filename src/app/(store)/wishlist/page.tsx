@@ -12,7 +12,7 @@ export default function WishlistPage() {
   return (
     <div className="site-x pt-10 lg:pt-14">
       <p className="eyebrow">Garment system // Saved</p>
-      <h1 className="display mt-4 text-5xl lg:text-[88px]">Wishlist</h1>
+      <h1 className="display mt-4 text-[40px] lg:text-[60px]">Wishlist</h1>
       <div className="mt-10 border-t border-line pt-10">
         {wishlist.length === 0 ? (
           <div className="flex flex-col items-start gap-6">

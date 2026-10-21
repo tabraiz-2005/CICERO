@@ -65,7 +65,7 @@ export async function Catalogue({
       <section className="flex flex-col gap-6 border-b border-line pb-10 pt-10 lg:flex-row lg:items-end lg:justify-between lg:pb-16 lg:pt-14">
         <div>
           <p className="eyebrow">{eyebrow}</p>
-          <h1 className="display mt-4 text-[44px] sm:text-[64px] lg:text-[96px]">{heading}</h1>
+          <h1 className="display mt-4 text-[38px] sm:text-[52px] lg:text-[68px]">{heading}</h1>
           {description && <p className="mt-5 max-w-xl text-sm leading-relaxed text-muted">{description}</p>}
         </div>
         <div className="flex flex-wrap items-center gap-x-8 gap-y-3 font-display text-[13px] uppercase tracking-wide2 text-muted sm:text-[15px] lg:pb-3">

@@ -46,7 +46,7 @@ export default async function About() {
   return (
     <div className="site-x pt-10 lg:pt-14">
       <p className="eyebrow">Our story // Since 2008</p>
-      <h1 className="display mt-4 text-5xl lg:text-[88px]">About Cicero</h1>
+      <h1 className="display mt-4 text-[40px] lg:text-[60px]">About Cicero</h1>
       <p className="mt-6 max-w-2xl text-[17px] leading-relaxed text-fg/85">
         A Gujranwala shop that has dressed the city for winter since 2008, now delivering across Pakistan.
       </p>

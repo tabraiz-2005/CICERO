@@ -34,7 +34,7 @@ export default async function HomePage() {
             <span className="inline-flex items-center gap-3 border border-line-strong bg-surface/80 px-6 py-3.5 font-display text-[11px] uppercase tracking-label backdrop-blur sm:text-[13px]">
               <Sparkles className="h-4 w-4" strokeWidth={1.5} /> {settings.hero_eyebrow}
             </span>
-            <h1 className="display mt-8 text-[52px] sm:text-[84px] lg:mt-12 lg:text-[120px]">{settings.hero_title}</h1>
+            <h1 className="display mt-8 text-[44px] sm:text-[64px] lg:mt-10 lg:text-[88px]">{settings.hero_title}</h1>
             <p className="mt-6 font-display text-sm font-semibold uppercase tracking-wide2 text-muted lg:text-base">{settings.tagline}</p>
             <p className="mt-6 max-w-xl text-lg font-light text-fg/90 lg:text-2xl">{settings.hero_subtitle}</p>
             <div className="mt-10 flex flex-wrap gap-4">
@@ -64,7 +64,7 @@ export default async function HomePage() {
                 className="group grid grid-cols-[48px_1fr_auto] items-center gap-4 border-b border-line py-6 transition-colors hover:bg-surface sm:grid-cols-[80px_1fr_auto_auto] lg:py-9"
               >
                 <span className="font-display text-sm text-subtle">{String(i + 1).padStart(2, '0')}</span>
-                <span className="display text-3xl transition-transform group-hover:translate-x-2 sm:text-5xl lg:text-7xl">{c.name}</span>
+                <span className="display text-3xl transition-transform group-hover:translate-x-2 sm:text-4xl lg:text-[52px]">{c.name}</span>
                 <span className="hidden max-w-xs text-right text-sm text-muted sm:block">{c.description}</span>
                 <span className="flex items-center gap-3 font-display text-xs uppercase tracking-label text-muted">
                   {c.itemCount} <ArrowUpRight className="h-5 w-5 text-fg" strokeWidth={1.5} />
@@ -81,7 +81,7 @@ export default async function HomePage() {
           <div className="flex flex-wrap items-end justify-between gap-6 border-b border-line pb-8">
             <div>
               <p className="eyebrow">Garment system // Latest</p>
-              <h2 className="display mt-4 text-5xl lg:text-[88px]">New arrivals</h2>
+              <h2 className="display mt-4 text-[40px] lg:text-[60px]">New arrivals</h2>
             </div>
             <Link href="/shop?sort=newest" className="label link-u text-muted">
               View all
@@ -129,7 +129,7 @@ export default async function HomePage() {
           <div className="flex flex-wrap items-end justify-between gap-6 border-b border-line pb-8">
             <div>
               <p className="eyebrow">Garment system // Core</p>
-              <h2 className="display mt-4 text-5xl lg:text-[88px]">The essentials</h2>
+              <h2 className="display mt-4 text-[40px] lg:text-[60px]">The essentials</h2>
             </div>
             <Link href="/shop" className="label link-u text-muted">
               Full catalogue
