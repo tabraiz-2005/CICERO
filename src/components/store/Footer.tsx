@@ -45,7 +45,7 @@ export function Footer({ settings, categories }: { settings: StoreSettings; cate
     <footer className="mt-24 border-t border-line">
       <div className="site-x grid gap-12 py-16 md:grid-cols-[1.5fr_repeat(3,1fr)] lg:py-20">
         <div>
-          <Logo className="w-[200px] text-fg" title={settings.store_name} />
+          <Logo className="w-[170px] text-fg" title={settings.store_name} />
           <p className="mt-4 font-display text-sm text-muted">“{settings.tagline}”</p>
           <p className="mt-2 font-display text-[11px] uppercase tracking-label text-subtle">Gujranwala · Since 2008</p>
 

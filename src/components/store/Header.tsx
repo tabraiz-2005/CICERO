@@ -55,8 +55,7 @@ function NavLinks({ categories, onNavigate, vertical }: { categories: NavCategor
               : cn(
                   'whitespace-nowrap text-[13px] font-medium tracking-label',
                   i >= 2 && 'hidden min-[1440px]:inline',
-                  i >= 3 && 'min-[1440px]:hidden min-[1800px]:inline',
-                  i >= 4 && 'min-[1800px]:hidden min-[2400px]:inline'
+                  i >= 4 && 'min-[1440px]:hidden min-[1800px]:inline'
                 ),
             l.active ? 'text-fg' : vertical ? 'text-fg' : 'text-fg/75'
           )}
@@ -64,7 +63,7 @@ function NavLinks({ categories, onNavigate, vertical }: { categories: NavCategor
           {l.label}
         </Link>
       ))}
-      {extra.map((l) => (
+      {vertical && extra.map((l) => (
         <Link
           key={l.href}
           href={l.href}
@@ -139,10 +138,27 @@ export function Header({ storeName, categories }: { storeName: string; categorie
             className="block text-fg"
             aria-label={`${storeName} home`}
           >
-            <Logo title={storeName} className="w-[136px] sm:w-[160px] lg:w-[184px] min-[1440px]:w-[212px]" />
+            <Logo title={storeName} className="w-[118px] sm:w-[140px] lg:w-[160px] min-[1440px]:w-[188px]" />
           </Link>
 
           <div className="flex items-center justify-end gap-1 sm:gap-3 lg:gap-6">
+            <nav className="mr-1 hidden items-center gap-6 xl:flex min-[1440px]:mr-4 min-[1440px]:gap-7" aria-label="Store">
+              {[
+                { href: '/about', label: 'About' },
+                { href: '/contact', label: 'Contact' },
+              ].map((l) => (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  className={cn(
+                    'whitespace-nowrap font-display text-[13px] font-medium uppercase tracking-label transition-colors hover:text-fg',
+                    pathname === l.href ? 'text-fg' : 'text-fg/75'
+                  )}
+                >
+                  {l.label}
+                </Link>
+              ))}
+            </nav>
             <ThemeToggle className="hidden sm:flex" />
             <button className="p-2" aria-label="Search" onClick={() => setSearchOpen(true)}>
               <Search className="h-[22px] w-[22px]" strokeWidth={1.6} />
@@ -156,7 +172,7 @@ export function Header({ storeName, categories }: { storeName: string; categorie
                 <ShoppingBag className="h-[22px] w-[22px]" strokeWidth={1.6} />
                 {hydrated && <Count n={itemCount} />}
               </span>
-              <span className="hidden font-display text-[13px] uppercase tracking-label text-fg/75 md:inline">Bag</span>
+              <span className="hidden font-display text-[13px] uppercase tracking-label text-fg/75 min-[1440px]:inline">Bag</span>
             </button>
           </div>
         </div>
@@ -165,7 +181,7 @@ export function Header({ storeName, categories }: { storeName: string; categorie
       {menuOpen && (
         <div className="fixed inset-0 z-50 flex flex-col bg-bg animate-fade-in lg:hidden">
           <div className="site-x flex h-[72px] items-center justify-between border-b border-line">
-            <Logo title={storeName} className="w-[136px]" />
+            <Logo title={storeName} className="w-[118px]" />
             <button className="-mr-2 p-2" aria-label="Close menu" onClick={() => setMenuOpen(false)}>
               <X className="h-6 w-6" strokeWidth={1.5} />
             </button>

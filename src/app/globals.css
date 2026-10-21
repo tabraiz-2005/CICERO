@@ -75,7 +75,7 @@
     @apply font-display text-[11px] font-semibold uppercase tracking-label sm:text-xs;
   }
   .display {
-    @apply font-display font-bold uppercase leading-[0.92] tracking-[-0.035em];
+    @apply font-display font-medium uppercase leading-[0.95] tracking-[0.01em];
   }
   .chip {
     @apply inline-flex h-11 items-center justify-center border border-line px-5 font-display text-[11px] uppercase tracking-label text-muted transition-colors hover:border-line-strong hover:text-fg sm:h-12 sm:px-6 sm:text-xs;

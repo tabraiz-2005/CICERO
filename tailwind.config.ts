@@ -24,7 +24,7 @@ const config: Config = {
         warning: v('warning'),
       },
       fontFamily: {
-        display: ['"Space Grotesk Variable"', '"Space Grotesk"', 'system-ui', 'sans-serif'],
+        display: ['"Jost Variable"', 'Jost', 'Futura', 'Century Gothic', 'system-ui', 'sans-serif'],
         sans: ['"Inter Variable"', 'Inter', 'system-ui', 'sans-serif'],
       },
       letterSpacing: {

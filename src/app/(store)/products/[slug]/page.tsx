@@ -4,7 +4,7 @@ import { getProductBySlug, getRelatedProducts, getSettings } from '@/lib/commerc
 import { ProductView } from '@/components/store/ProductView';
 import { ProductCard } from '@/components/store/ProductCard';
 import { Img } from '@/components/ui/Img';
-import { primaryImage } from '@/lib/utils';
+import { formatCents, primaryImage } from '@/lib/utils';
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -55,7 +55,17 @@ export default async function ProductPage({ params }: Props) {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <ProductView product={product} lowStockThreshold={settings.low_stock_threshold} freeShipping={freeShipping} />
+      <ProductView
+        product={product}
+        lowStockThreshold={settings.low_stock_threshold}
+        freeShipping={freeShipping}
+        deliveryNote={
+          settings.free_shipping_threshold !== null
+            ? `Free delivery over ${formatCents(settings.free_shipping_threshold)}`
+            : 'Delivery across Pakistan'
+        }
+        whatsappPhone={settings.contact_phone}
+      />
 
       <section id="details" className="site-x scroll-mt-28 pt-20 lg:pt-28">
         <div className="grid gap-12 lg:grid-cols-[1fr_1.2fr] lg:gap-24">

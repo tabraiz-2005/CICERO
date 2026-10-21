@@ -1,10 +1,13 @@
 'use client';
 
-import { Eye, ShieldCheck, ShoppingBag, Sparkles, Truck } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { Banknote, Eye, MessageCircle, RotateCcw, ShoppingBag, Sparkles, Truck } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
 import { useCart } from '@/context/CartContext';
 import type { Product } from '@/lib/commerce/types';
 import { cn, formatPrice } from '@/lib/utils';
+import { whatsappLink } from '@/lib/phone';
 import { Img } from '@/components/ui/Img';
 import { GarmentArt } from './GarmentArt';
 import { WishlistButton } from './WishlistButton';
@@ -13,12 +16,19 @@ export function ProductView({
   product,
   lowStockThreshold,
   freeShipping,
+  deliveryNote,
+  whatsappPhone,
 }: {
   product: Product;
   lowStockThreshold: number;
   freeShipping: boolean;
+  deliveryNote?: string;
+  whatsappPhone?: string | null;
 }) {
-  const { addItem } = useCart();
+  const { addItem, setIsCartOpen } = useCart();
+  const router = useRouter();
+  const [pageUrl, setPageUrl] = useState('');
+  useEffect(() => setPageUrl(window.location.href.split('?')[0]), []);
 
   const firstAvailable = product.variants.find((v) => v.inStock) ?? product.variants[0];
   const [color, setColor] = useState(firstAvailable?.color ?? '');
@@ -36,6 +46,24 @@ export function ProductView({
   const variant = product.variants.find((v) => v.color === color && v.size === size);
   const price = variant?.price ?? product.price;
   const compareAt = variant?.compareAtPrice ?? product.compareAtPrice;
+  const discount = compareAt && compareAt > price ? Math.round((1 - price / compareAt) * 100) : 0;
+  const canBuy = Boolean(variant && variant.inStock);
+
+  const buyNow = () => {
+    if (!variant || !variant.inStock) return;
+    addItem(product, variant, 1);
+    setIsCartOpen(false);
+    router.push('/checkout');
+  };
+
+  const waOrder = whatsappLink(
+    whatsappPhone,
+    `Hi Cicero, I'd like to order: ${product.title}` +
+      (color ? ` · ${color}` : '') +
+      (size ? ` · size ${size}` : '') +
+      ` · ${formatPrice(price)}` +
+      (pageUrl ? `\n${pageUrl}` : '')
+  );
 
   const colorStock = product.variants.filter((v) => v.color === color).reduce((n, v) => n + v.inventoryQuantity, 0);
   const stockLeft = variant ? variant.inventoryQuantity : colorStock;
@@ -59,7 +87,7 @@ export function ProductView({
         : 'In stock — ready to ship';
 
   const titleSize =
-    product.title.length > 26 ? 'text-[44px] sm:text-[60px] lg:text-[72px]' : 'text-[52px] sm:text-[84px] lg:text-[120px]';
+    product.title.length > 26 ? 'text-[36px] sm:text-[48px] lg:text-[60px]' : 'text-[42px] sm:text-[60px] lg:text-[76px]';
 
   return (
     <section className="relative -mt-[72px] min-h-[calc(100svh-6px)] overflow-hidden lg:-mt-[100px]">
@@ -98,6 +126,15 @@ export function ProductView({
           </p>
 
           <div className="mt-5 border border-line-strong bg-surface/90 p-5 backdrop-blur sm:p-8">
+            <p className="mb-6 flex flex-wrap items-center gap-x-3 gap-y-2 font-display text-xl font-semibold tracking-[0.06em] sm:text-2xl">
+              {formatPrice(price)}
+              {discount > 0 && (
+                <>
+                  <span className="text-sm font-normal text-subtle line-through">{formatPrice(compareAt!)}</span>
+                  <span className="bg-brand px-2 py-1 text-[11px] font-bold tracking-normal text-brand-ink sm:text-xs">-{discount}%</span>
+                </>
+              )}
+            </p>
             {product.availableColors.length > 1 && (
               <div className="mb-6">
                 <p className="font-display text-[13px] uppercase tracking-wide2 text-muted">
@@ -129,12 +166,11 @@ export function ProductView({
             )}
 
             <div className="flex items-center justify-between">
-              <p className="font-display text-[13px] uppercase tracking-wide2 text-muted sm:text-base">Select size</p>
-              <p className="font-display text-base font-bold tracking-[0.16em] sm:text-xl">
-                {compareAt && compareAt > price && (
-                  <span className="mr-3 text-sm font-normal text-subtle line-through">{formatPrice(compareAt)}</span>
-                )}
-                {formatPrice(price)}
+              <p className="font-display text-[13px] uppercase tracking-wide2 text-muted sm:text-base">
+                Select size
+                <Link href="/size-guide" className="ml-4 normal-case tracking-normal text-fg/70 underline underline-offset-4 hover:text-fg">
+                  Size guide
+                </Link>
               </p>
             </div>
 
@@ -159,32 +195,52 @@ export function ProductView({
               ))}
             </div>
 
-            <div className="mt-6 flex gap-3 sm:mt-7 sm:gap-5">
+            <button
+              type="button"
+              className="btn-primary mt-6 h-14 w-full text-sm sm:mt-7 sm:h-[68px] sm:text-base"
+              disabled={!canBuy}
+              onClick={buyNow}
+            >
+              {soldOut ? 'Sold out' : !variant ? 'Select a size' : !variant.inStock ? 'Unavailable' : `Buy now — ${formatPrice(price)}`}
+            </button>
+            <div className="mt-3 flex gap-3">
               <button
                 type="button"
-                className="btn-primary h-14 flex-1 text-sm sm:h-[76px] sm:text-base"
-                disabled={!variant || !variant.inStock}
+                className="btn-outline h-14 flex-1 text-sm"
+                disabled={!canBuy}
                 onClick={() => variant && addItem(product, variant, 1)}
               >
-                <ShoppingBag className="h-5 w-5" strokeWidth={1.75} />
-                {soldOut ? 'Sold out' : !variant ? 'Select a size' : !variant.inStock ? 'Unavailable' : `Buy — ${formatPrice(price)}`}
+                <ShoppingBag className="h-5 w-5" strokeWidth={1.75} /> Add to bag
               </button>
               <a
                 href="#details"
                 aria-label="View product details"
-                className="flex h-14 w-14 shrink-0 items-center justify-center border border-line bg-bg transition-colors hover:border-line-strong sm:h-[76px] sm:w-[76px]"
+                className="flex h-14 w-14 shrink-0 items-center justify-center border border-line bg-bg transition-colors hover:border-line-strong"
               >
                 <Eye className="h-6 w-6" strokeWidth={1.5} />
               </a>
             </div>
+            {waOrder && (
+              <a
+                href={waOrder}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-3 flex h-12 w-full items-center justify-center gap-3 border border-[#25D366]/60 font-display text-xs font-bold uppercase tracking-label text-fg transition-colors hover:bg-[#25D366]/10"
+              >
+                <MessageCircle className="h-5 w-5 text-[#25D366]" strokeWidth={1.75} /> Order on WhatsApp
+              </a>
+            )}
 
-            <div className="mt-6 flex flex-col gap-3 border-t border-line pt-6 font-display text-[11px] uppercase tracking-label text-muted sm:mt-7 sm:flex-row sm:justify-between sm:text-[13px]">
+            <div className="mt-6 grid gap-3 border-t border-line pt-6 font-display text-[11px] uppercase tracking-label text-muted sm:grid-cols-3 sm:text-[12px]">
               <span className="flex items-center gap-3">
-                <Truck className="h-4 w-4" strokeWidth={1.5} /> {freeShipping ? 'Free shipping' : 'Tracked shipping'}
+                <Banknote className="h-4 w-4 shrink-0" strokeWidth={1.5} /> Cash on Delivery
               </span>
               <span className="flex items-center gap-3">
-                <ShieldCheck className="h-4 w-4" strokeWidth={1.5} /> 30-day returns
+                <Truck className="h-4 w-4 shrink-0" strokeWidth={1.5} /> {freeShipping ? 'Free delivery' : deliveryNote ?? 'Delivery across Pakistan'}
               </span>
+              <Link href="/returns" className="flex items-center gap-3 hover:text-fg">
+                <RotateCcw className="h-4 w-4 shrink-0" strokeWidth={1.5} /> Exchanges & returns
+              </Link>
             </div>
           </div>
         </div>

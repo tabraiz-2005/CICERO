@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import '@fontsource-variable/space-grotesk';
+import '@fontsource-variable/jost';
 import '@fontsource-variable/inter';
 import './globals.css';
 import { themeScript } from '@/components/ui/ThemeToggle';
