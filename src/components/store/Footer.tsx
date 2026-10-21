@@ -1,9 +1,10 @@
 import Link from 'next/link';
-import { MapPin, MessageCircle } from 'lucide-react';
+import { Clock, MapPin, MessageCircle } from 'lucide-react';
 import type { NavCategory } from './Header';
 import type { StoreSettings } from '@/lib/commerce/types';
 import { formatPkPhone, whatsappLink } from '@/lib/phone';
 import { Logo } from './Logo';
+import { mapsLink } from '@/lib/commerce/local';
 
 export function Footer({ settings, categories }: { settings: StoreSettings; categories: NavCategory[] }) {
   const cols = [
@@ -49,13 +50,18 @@ export function Footer({ settings, categories }: { settings: StoreSettings; cate
             {settings.address && (
               <li>
                 <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${settings.store_name}, ${settings.address}`)}`}
+                  href={mapsLink(settings) ?? '#'}
                   target="_blank"
                   rel="noreferrer"
                   className="flex items-start gap-3 text-fg/85 hover:text-fg"
                 >
                   <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-brand" strokeWidth={1.6} /> {settings.address}
                 </a>
+              </li>
+            )}
+            {settings.opening_hours && (
+              <li className="flex items-start gap-3 text-fg/85">
+                <Clock className="mt-0.5 h-4 w-4 shrink-0 text-brand" strokeWidth={1.6} /> {settings.opening_hours}
               </li>
             )}
             {phones.map((p) => (

@@ -147,6 +147,8 @@ export interface StoreSettings {
   address: string | null;
   instagram_url: string | null;
   tiktok_url: string | null;
+  opening_hours: string | null;
+  google_maps_url: string | null;
 }
 
 export const DEFAULT_SETTINGS: StoreSettings = {
@@ -167,7 +169,9 @@ export const DEFAULT_SETTINGS: StoreSettings = {
   contact_email: 'care@cicero.store',
   contact_phone: '03207110919',
   contact_phone_2: '03706157560',
-  address: 'Main Market, Satellite Town, Gujranwala',
+  address: 'Shop No 142, Block A, Satellite Town, Gujranwala',
   instagram_url: 'https://www.instagram.com/cicero.com.pk',
   tiktok_url: null,
+  opening_hours: null,
+  google_maps_url: null,
 };

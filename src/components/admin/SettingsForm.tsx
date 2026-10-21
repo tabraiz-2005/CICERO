@@ -112,7 +112,9 @@ export function SettingsForm({ initial }: { initial: StoreSettings }) {
           <Field label="Customer email"><input type="email" {...t('contact_email')} className="field" /></Field>
           <Field label="WhatsApp / phone 1" hint="Used for the WhatsApp button on the store"><input {...t('contact_phone')} className="field" placeholder="0320 7110919" /></Field>
           <Field label="WhatsApp / phone 2 (optional)"><input {...t('contact_phone_2')} className="field" placeholder="0370 6157560" /></Field>
-          <Field label="Shop address" className="sm:col-span-2"><input {...t('address')} className="field" placeholder="Main Market, Satellite Town, Gujranwala" /></Field>
+          <Field label="Shop address" className="sm:col-span-2"><input {...t('address')} className="field" placeholder="Shop No 142, Block A, Satellite Town, Gujranwala" /></Field>
+          <Field label="Opening hours" hint="Shown in the footer and contact page, e.g. Mon–Sat 11am–10pm · Sun closed"><input {...t('opening_hours')} className="field" placeholder="Mon–Sat 11am–10pm · Sun closed" /></Field>
+          <Field label="Google Maps link" hint="Google Maps → your shop → Share → Copy link"><input {...t('google_maps_url')} className="field" placeholder="https://maps.app.goo.gl/…" /></Field>
           <Field label="Instagram URL"><input {...t('instagram_url')} className="field" placeholder="instagram.com/cicero" /></Field>
           <Field label="TikTok URL"><input {...t('tiktok_url')} className="field" /></Field>
         </div>

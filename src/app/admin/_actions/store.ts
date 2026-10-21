@@ -174,11 +174,29 @@ export async function saveSettings(s: Partial<StoreSettings>): Promise<ActionRes
       address: text(s.address) || null,
       instagram_url: url(s.instagram_url),
       tiktok_url: url(s.tiktok_url),
+      opening_hours: text(s.opening_hours) || null,
+      google_maps_url: url(s.google_maps_url),
     };
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(row.contact_email)) return { ok: false, error: 'Enter a valid contact email.' };
-    const { error } = await getSupabaseAdmin().from('store_settings').upsert({ id: 1, ...row });
-    if (error) throw error;
+    // If the database is missing a newer column (setup.sql not re-run yet),
+    // save everything else instead of failing, and say which field was skipped.
+    const payload: Record<string, unknown> = { id: 1, ...row };
+    const skipped: string[] = [];
+    for (let attempt = 0; attempt < 6; attempt++) {
+      const { error } = await getSupabaseAdmin().from('store_settings').upsert(payload);
+      if (!error) break;
+      const missing = /could not find the '([a-z0-9_]+)' column/i.exec(error.message)?.[1];
+      if (!missing || !(missing in payload) || missing === 'id') throw error;
+      delete payload[missing];
+      skipped.push(missing);
+    }
     refresh();
+    if (skipped.length) {
+      return {
+        ok: true,
+        message: `Saved, except ${skipped.join(', ')}: run supabase/setup.sql in Supabase once to enable ${skipped.length > 1 ? 'these fields' : 'this field'}.`,
+      };
+    }
     return { ok: true, message: 'Settings saved — the store is updated.' };
   } catch (e) {
     return fail(e);

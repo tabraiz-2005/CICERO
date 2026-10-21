@@ -1238,4 +1238,38 @@ grant execute on function public.count_discount_use(text) to service_role;
 -- Ask Supabase's API to pick up the new columns straight away.
 notify pgrst, 'reload schema';
 
+-- ======== 06_brand.sql ========
+-- ---------------------------------------------------------------------------
+-- Cicero brand details: address, second phone, Instagram, tagline.
+-- Only fills empty / default values, so it never overwrites your own edits.
+-- ---------------------------------------------------------------------------
+alter table public.store_settings add column if not exists address text;
+alter table public.store_settings add column if not exists contact_phone_2 text;
+
+update public.store_settings
+   set address         = coalesce(nullif(address, ''), 'Main Market, Satellite Town, Gujranwala'),
+       contact_phone   = coalesce(nullif(contact_phone, ''), '03207110919'),
+       contact_phone_2 = coalesce(nullif(contact_phone_2, ''), '03706157560'),
+       instagram_url   = coalesce(nullif(instagram_url, ''), 'https://www.instagram.com/cicero.com.pk'),
+       tagline = case when tagline in ('Coats · Jackets · Knitwear', 'Outerwear & Knitwear') then 'we make you more beautiful' else tagline end
+ where id = 1;
+
+notify pgrst, 'reload schema';
+
+-- ======== 07_local_seo.sql ========
+-- ---------------------------------------------------------------------------
+-- Shop hours and Google Maps link (shown in the footer, contact page and to
+-- Google as structured data). Also moves the old placeholder address to the
+-- FBR-registered one, but only if nobody has changed it yet.
+-- ---------------------------------------------------------------------------
+alter table public.store_settings add column if not exists opening_hours text;
+alter table public.store_settings add column if not exists google_maps_url text;
+
+update public.store_settings
+   set address = 'Shop No 142, Block A, Satellite Town, Gujranwala'
+ where id = 1
+   and (address is null or address = '' or address = 'Main Market, Satellite Town, Gujranwala');
+
+notify pgrst, 'reload schema';
+
 commit;

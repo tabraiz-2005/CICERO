@@ -5,6 +5,8 @@ import { Footer } from '@/components/store/Footer';
 import { CartDrawer } from '@/components/store/CartDrawer';
 import { WhatsAppButton } from '@/components/store/WhatsAppButton';
 import { getCategories, getSettings } from '@/lib/commerce/catalog';
+import { storeJsonLd } from '@/lib/commerce/local';
+import { env } from '@/lib/env';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,6 +17,7 @@ export default async function StoreLayout({ children }: { children: React.ReactN
   return (
     <WishlistProvider>
       <CartProvider>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(storeJsonLd(settings, env.siteUrl)).replace(/</g, '\\u003c') }} />
         <div className="flex min-h-screen flex-col">
           <div className="bg-brand text-brand-ink">
             {settings.announcement_enabled && settings.announcement_text ? (
