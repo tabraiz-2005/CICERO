@@ -30,6 +30,8 @@ export function storeJsonLd(s: StoreSettings, siteUrl: string) {
     image: s.hero_image_url || undefined,
     telephone: phones[0],
     email: s.contact_email || undefined,
+    foundingDate: '2008',
+    founder: { '@type': 'Person', name: 'Amir Khan' },
     priceRange: 'Rs',
     currenciesAccepted: 'PKR',
     paymentAccepted: 'Cash on Delivery',

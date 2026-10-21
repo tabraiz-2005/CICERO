@@ -37,7 +37,10 @@ function NavLinks({ categories, onNavigate, vertical }: { categories: NavCategor
       active: pathname === '/shop' && params.get('category') === c.slug,
     })),
   ];
-  const contact = { href: '/contact', label: 'Contact', active: pathname === '/contact' };
+  const extra = [
+    { href: '/about', label: 'About', active: pathname === '/about' },
+    { href: '/contact', label: 'Contact', active: pathname === '/contact' },
+  ];
   return (
     <>
       {links.map((l, i) => (
@@ -53,7 +56,7 @@ function NavLinks({ categories, onNavigate, vertical }: { categories: NavCategor
                   'whitespace-nowrap text-[13px] font-medium tracking-label',
                   i >= 2 && 'hidden min-[1440px]:inline',
                   i >= 3 && 'min-[1440px]:hidden min-[1800px]:inline',
-                  i >= 4 && 'min-[1800px]:hidden min-[2200px]:inline'
+                  i >= 4 && 'min-[1800px]:hidden min-[2400px]:inline'
                 ),
             l.active ? 'text-fg' : vertical ? 'text-fg' : 'text-fg/75'
           )}
@@ -61,19 +64,22 @@ function NavLinks({ categories, onNavigate, vertical }: { categories: NavCategor
           {l.label}
         </Link>
       ))}
-      <Link
-        href={contact.href}
-        onClick={onNavigate}
-        className={cn(
-          'font-display uppercase transition-colors hover:text-fg',
-          vertical
-            ? 'border-b border-line py-5 text-2xl font-bold tracking-[0.08em]'
-            : 'whitespace-nowrap text-[13px] font-medium tracking-label',
-          contact.active ? 'text-fg' : vertical ? 'text-fg' : 'text-fg/75'
-        )}
-      >
-        {contact.label}
-      </Link>
+      {extra.map((l) => (
+        <Link
+          key={l.href}
+          href={l.href}
+          onClick={onNavigate}
+          className={cn(
+            'font-display uppercase transition-colors hover:text-fg',
+            vertical
+              ? 'border-b border-line py-5 text-2xl font-bold tracking-[0.08em]'
+              : 'whitespace-nowrap text-[13px] font-medium tracking-label',
+            l.active ? 'text-fg' : vertical ? 'text-fg' : 'text-fg/75'
+          )}
+        >
+          {l.label}
+        </Link>
+      ))}
     </>
   );
 }
@@ -133,7 +139,7 @@ export function Header({ storeName, categories }: { storeName: string; categorie
             className="block text-fg"
             aria-label={`${storeName} home`}
           >
-            <Logo title={storeName} className="w-[118px] sm:w-[140px] lg:w-[160px] min-[1440px]:w-[188px]" />
+            <Logo title={storeName} className="w-[136px] sm:w-[160px] lg:w-[184px] min-[1440px]:w-[212px]" />
           </Link>
 
           <div className="flex items-center justify-end gap-1 sm:gap-3 lg:gap-6">
@@ -159,7 +165,7 @@ export function Header({ storeName, categories }: { storeName: string; categorie
       {menuOpen && (
         <div className="fixed inset-0 z-50 flex flex-col bg-bg animate-fade-in lg:hidden">
           <div className="site-x flex h-[72px] items-center justify-between border-b border-line">
-            <Logo title={storeName} className="w-[118px]" />
+            <Logo title={storeName} className="w-[136px]" />
             <button className="-mr-2 p-2" aria-label="Close menu" onClick={() => setMenuOpen(false)}>
               <X className="h-6 w-6" strokeWidth={1.5} />
             </button>
