@@ -78,6 +78,31 @@ export default async function HomePage() {
         </section>
       )}
 
+      {/* Everything else */}
+      {everything.length > 0 && (
+        <section className="site-x pt-24 lg:pt-32">
+          <div className="flex flex-wrap items-end justify-between gap-6 border-b border-line pb-8">
+            <div>
+              <p className="eyebrow">Garment system // All</p>
+              <h2 className="display mt-4 text-[40px] lg:text-[60px]">All pieces</h2>
+            </div>
+            <Link href="/shop" className="label link-u text-muted">
+              Shop all {all.length}
+            </Link>
+          </div>
+          <div className="mt-10 grid grid-cols-2 gap-x-3 gap-y-10 md:grid-cols-3 lg:gap-x-[42px] xl:grid-cols-4">
+            {everything.slice(0, ALL_LIMIT).map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+          {everything.length > ALL_LIMIT && (
+            <div className="mt-12 flex justify-center">
+              <Link href="/shop" className="btn-outline h-14 px-10">View all {all.length} pieces</Link>
+            </div>
+          )}
+        </section>
+      )}
+
       {/* New arrivals */}
       {newest.length > 0 && (
         <section className="site-x pt-24 lg:pt-32">
@@ -143,31 +168,6 @@ export default async function HomePage() {
               <ProductCard key={p.id} product={p} />
             ))}
           </div>
-        </section>
-      )}
-
-      {/* Everything else */}
-      {everything.length > 0 && (
-        <section className="site-x pt-24 lg:pt-32">
-          <div className="flex flex-wrap items-end justify-between gap-6 border-b border-line pb-8">
-            <div>
-              <p className="eyebrow">Garment system // All</p>
-              <h2 className="display mt-4 text-[40px] lg:text-[60px]">All pieces</h2>
-            </div>
-            <Link href="/shop" className="label link-u text-muted">
-              Shop all {all.length}
-            </Link>
-          </div>
-          <div className="mt-10 grid grid-cols-2 gap-x-3 gap-y-10 md:grid-cols-3 lg:gap-x-[42px] xl:grid-cols-4">
-            {everything.slice(0, ALL_LIMIT).map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
-          {everything.length > ALL_LIMIT && (
-            <div className="mt-12 flex justify-center">
-              <Link href="/shop" className="btn-outline h-14 px-10">View all {all.length} pieces</Link>
-            </div>
-          )}
         </section>
       )}
 
