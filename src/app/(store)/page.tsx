@@ -7,15 +7,18 @@ import { Img } from '@/components/ui/Img';
 import { formatCents } from '@/lib/utils';
 
 export default async function HomePage() {
-  const [settings, categories, collections, newest, featured] = await Promise.all([
+  const [settings, categories, collections, all] = await Promise.all([
     getSettings(),
     getCategories(),
     getCollections(),
-    getProducts({ sort: 'newest', limit: 4 }),
-    getProducts({ featuredOnly: true, limit: 8 }),
+    getProducts({ sort: 'recent' }),
   ]);
+  const newest = all.slice(0, 4);
   const newIds = new Set(newest.map((p) => p.id));
-  const featuredRest = featured.filter((p) => !newIds.has(p.id)).slice(0, 4);
+  const featuredRest = all.filter((p) => p.isFeatured && !newIds.has(p.id)).slice(0, 4);
+  const shownIds = new Set(newest.concat(featuredRest).map((p) => p.id));
+  const everything = all.filter((p) => !shownIds.has(p.id));
+  const ALL_LIMIT = 24;
 
   return (
     <>
@@ -140,6 +143,31 @@ export default async function HomePage() {
               <ProductCard key={p.id} product={p} />
             ))}
           </div>
+        </section>
+      )}
+
+      {/* Everything else */}
+      {everything.length > 0 && (
+        <section className="site-x pt-24 lg:pt-32">
+          <div className="flex flex-wrap items-end justify-between gap-6 border-b border-line pb-8">
+            <div>
+              <p className="eyebrow">Garment system // All</p>
+              <h2 className="display mt-4 text-[40px] lg:text-[60px]">All pieces</h2>
+            </div>
+            <Link href="/shop" className="label link-u text-muted">
+              Shop all {all.length}
+            </Link>
+          </div>
+          <div className="mt-10 grid grid-cols-2 gap-x-3 gap-y-10 md:grid-cols-3 lg:gap-x-[42px] xl:grid-cols-4">
+            {everything.slice(0, ALL_LIMIT).map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+          {everything.length > ALL_LIMIT && (
+            <div className="mt-12 flex justify-center">
+              <Link href="/shop" className="btn-outline h-14 px-10">View all {all.length} pieces</Link>
+            </div>
+          )}
         </section>
       )}
 

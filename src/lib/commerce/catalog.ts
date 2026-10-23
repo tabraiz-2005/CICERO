@@ -150,7 +150,7 @@ export function mapProduct(row: Row): Product {
 /*  Queries                                                                    */
 /* -------------------------------------------------------------------------- */
 
-export type SortKey = 'featured' | 'newest' | 'price-low' | 'price-high';
+export type SortKey = 'featured' | 'newest' | 'recent' | 'price-low' | 'price-high';
 
 export interface ProductFilter {
   gender?: 'men' | 'women' | 'all';
@@ -206,6 +206,8 @@ export async function getProducts(filter: ProductFilter = {}): Promise<Product[]
     case 'price-high':
       sorted.sort((a, b) => b.price - a.price);
       break;
+    case 'recent':
+      break; // already ordered by publish date, newest first
     case 'newest':
       sorted.sort((a, b) => Number(Boolean(b.isNewArrival)) - Number(Boolean(a.isNewArrival)));
       break;
