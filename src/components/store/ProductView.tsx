@@ -15,11 +15,11 @@ import { WishlistButton } from './WishlistButton';
 function Accordion({ title, children, open }: { title: string; children: React.ReactNode; open?: boolean }) {
   return (
     <details className="group border-b border-line" open={open}>
-      <summary className="flex cursor-pointer list-none items-center justify-between py-5 text-[15px] tracking-[0.02em] text-fg [&::-webkit-details-marker]:hidden">
+      <summary className="flex cursor-pointer list-none items-center justify-between py-4 text-[14px] tracking-[0.02em] text-fg [&::-webkit-details-marker]:hidden">
         {title}
         <ChevronDown className="h-4 w-4 text-muted transition-transform group-open:rotate-180" strokeWidth={1.5} />
       </summary>
-      <div className="pb-6 text-[14px] leading-relaxed text-fg/80">{children}</div>
+      <div className="pb-5 text-[13px] leading-relaxed text-fg/80">{children}</div>
     </details>
   );
 }
@@ -114,21 +114,21 @@ export function ProductView({
   const dept = product.gender === 'women' ? 'Women' : product.gender === 'men' ? 'Men' : null;
 
   return (
-    <section className="site-x grid gap-8 pt-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(360px,1fr)] lg:gap-16 lg:pt-8">
+    <section className="site-x mx-auto grid max-w-[1280px] gap-6 pt-3 md:grid-cols-[minmax(0,1fr)_minmax(320px,400px)] md:gap-10 md:pt-8 lg:gap-14">
       {/* Gallery */}
-      <div className="relative -mx-4 sm:mx-0">
+      <div className="relative -mx-4 sm:mx-0 md:ml-auto md:w-full md:max-w-[620px]">
         <div
           ref={railRef}
           onScroll={(e) => {
             const el = e.currentTarget;
             setSlide(Math.round(el.scrollLeft / Math.max(1, el.clientWidth)));
           }}
-          className="flex snap-x snap-mandatory overflow-x-auto no-scrollbar lg:block lg:space-y-3 lg:overflow-visible"
+          className="flex snap-x snap-mandatory overflow-x-auto no-scrollbar md:block md:space-y-3 md:overflow-visible"
         >
           {images.length ? (
             images.map((img, i) => (
-              <div key={img.url + i} className="relative aspect-[4/5] w-full shrink-0 snap-center bg-[#ebe9e6]">
-                <Img src={img.url} alt={img.alt || product.title} sizes="(max-width:1024px) 100vw, 58vw" priority={i === 0} className="object-contain" />
+              <div key={img.url + i} className="relative aspect-[4/5] max-h-[72svh] w-full shrink-0 snap-center bg-[#ebe9e6] md:max-h-none">
+                <Img src={img.url} alt={img.alt || product.title} sizes="(max-width:768px) 100vw, 620px" priority={i === 0} className="object-contain" />
               </div>
             ))
           ) : (
@@ -138,7 +138,7 @@ export function ProductView({
           )}
         </div>
         {images.length > 1 && (
-          <div className="mt-3 flex justify-center gap-2 lg:hidden">
+          <div className="mt-3 flex justify-center gap-2 md:hidden">
             {images.map((_, i) => (
               <span key={i} className={cn('h-1.5 w-1.5 rounded-full', i === slide ? 'bg-fg' : 'bg-line-strong')} />
             ))}
@@ -147,8 +147,8 @@ export function ProductView({
       </div>
 
       {/* Buy panel */}
-      <div className="lg:sticky lg:top-28 lg:self-start">
-        <nav className="flex flex-wrap items-center gap-2 text-[13px] text-muted" aria-label="Breadcrumb">
+      <div className="md:sticky md:top-28 md:self-start">
+        <nav className="flex flex-wrap items-center gap-2 text-[12px] text-muted" aria-label="Breadcrumb">
           {dept && (
             <>
               <Link href={`/${dept.toLowerCase()}`} className="hover:text-fg">{dept}</Link>
@@ -158,31 +158,31 @@ export function ProductView({
           <Link href={`/shop?category=${product.category}`} className="text-fg/80 hover:text-fg">{product.categoryName}</Link>
         </nav>
 
-        <div className="mt-6 flex items-start justify-between gap-4">
-          <h1 className="font-display text-[26px] font-normal leading-tight tracking-[0.01em] sm:text-[30px]">{product.title}</h1>
+        <div className="mt-4 flex items-start justify-between gap-3">
+          <h1 className="font-display text-[clamp(19px,1.6vw,23px)] font-normal leading-snug tracking-[0.01em]">{product.title}</h1>
           <div className="flex shrink-0 items-center gap-1">
-            <button type="button" onClick={share} aria-label="Share" className="flex h-10 w-10 items-center justify-center text-fg/80 hover:text-fg">
-              <Share2 className="h-5 w-5" strokeWidth={1.4} />
+            <button type="button" onClick={share} aria-label="Share" className="flex h-9 w-9 items-center justify-center text-fg/80 hover:text-fg">
+              <Share2 className="h-[18px] w-[18px]" strokeWidth={1.4} />
             </button>
-            <WishlistButton product={product} className="h-10 w-10 bg-transparent text-fg backdrop-blur-0 hover:scale-100" />
+            <WishlistButton product={product} className="h-9 w-9 bg-transparent text-fg backdrop-blur-0 hover:scale-100" />
           </div>
         </div>
 
-        <p className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[18px]">
+        <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[16px]">
           <span>{formatPrice(price)}</span>
           {discount > 0 && (
             <>
-              <span className="text-[15px] text-subtle line-through">{formatPrice(compareAt!)}</span>
-              <span className="text-[13px] font-medium text-brand">-{discount}%</span>
+              <span className="text-[13px] text-subtle line-through">{formatPrice(compareAt!)}</span>
+              <span className="text-[12px] font-medium text-brand">-{discount}%</span>
             </>
           )}
         </p>
-        {product.subtitle && <p className="mt-3 text-[14px] text-muted">{product.subtitle}</p>}
+        {product.subtitle && <p className="mt-2 text-[13px] text-muted">{product.subtitle}</p>}
 
         {/* Colour */}
-        <div className="mt-8 border-t border-line pt-6">
+        <div className="mt-6 border-t border-line pt-5">
           <div className="flex items-center justify-between">
-            <p className="text-[15px]">
+            <p className="text-[13px]">
               Colour: <span className="text-fg/80">{color || '—'}</span>
             </p>
             {product.availableColors.length > 0 && (
@@ -198,7 +198,7 @@ export function ProductView({
                       aria-pressed={color === c.name}
                       title={c.name}
                       className={cn(
-                        'h-8 w-8 rounded-full border p-[3px] transition-colors',
+                        'h-7 w-7 rounded-full border p-[3px] transition-colors',
                         color === c.name ? 'border-fg' : 'border-transparent hover:border-line-strong',
                         !any && 'opacity-40'
                       )}
@@ -213,16 +213,16 @@ export function ProductView({
         </div>
 
         {/* Size */}
-        <div className="mt-6 border-t border-line pt-6">
+        <div className="mt-5 border-t border-line pt-5">
           <div className="flex items-center justify-between">
-            <p className="text-[15px]">
+            <p className="text-[13px]">
               Size: <span className="text-fg/80">{size ?? 'Select'}</span>
             </p>
             <Link href="/size-guide" className="text-[13px] text-muted underline underline-offset-4 hover:text-fg">
               Size guide
             </Link>
           </div>
-          <div className="mt-4 grid grid-cols-4 gap-2 sm:grid-cols-5">
+          <div className="mt-3 grid grid-cols-5 gap-2">
             {sizesForColor.map(({ size: s, available }) => (
               <button
                 key={s}
@@ -231,7 +231,7 @@ export function ProductView({
                 onClick={() => setSize(s)}
                 aria-pressed={size === s}
                 className={cn(
-                  'h-12 border text-[14px] transition-colors',
+                  'h-11 border text-[13px] transition-colors',
                   size === s ? 'border-fg bg-fg text-bg' : 'border-line text-fg/85 hover:border-fg',
                   !available && 'cursor-not-allowed text-subtle line-through hover:border-line'
                 )}
@@ -246,12 +246,12 @@ export function ProductView({
         </div>
 
         {/* Actions */}
-        <div className="mt-8 space-y-3">
+        <div className="mt-6 space-y-2.5">
           <button
             type="button"
             disabled={!canBuy}
             onClick={addToBag}
-            className="flex h-14 w-full items-center justify-center bg-fg font-display text-[13px] font-medium uppercase tracking-[0.3em] text-bg transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex h-12 w-full items-center justify-center bg-fg font-display text-[12px] font-medium uppercase tracking-[0.26em] text-bg transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
           >
             {soldOut ? 'Sold out' : !variant ? 'Select a size' : !variant.inStock ? 'Unavailable' : 'Add to bag'}
           </button>
@@ -259,7 +259,7 @@ export function ProductView({
             type="button"
             disabled={!canBuy}
             onClick={buyNow}
-            className="flex h-14 w-full items-center justify-center border border-fg font-display text-[13px] font-medium uppercase tracking-[0.3em] text-fg transition-colors hover:bg-fg hover:text-bg disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex h-12 w-full items-center justify-center border border-fg font-display text-[12px] font-medium uppercase tracking-[0.26em] text-fg transition-colors hover:bg-fg hover:text-bg disabled:cursor-not-allowed disabled:opacity-40"
           >
             Buy now · Cash on Delivery
           </button>
@@ -268,14 +268,14 @@ export function ProductView({
               href={waOrder}
               target="_blank"
               rel="noreferrer"
-              className="flex h-12 w-full items-center justify-center gap-3 text-[14px] text-fg/85 hover:text-fg"
+              className="flex h-11 w-full items-center justify-center gap-2.5 text-[13px] text-fg/85 hover:text-fg"
             >
               <MessageCircle className="h-5 w-5 text-[#25D366]" strokeWidth={1.6} /> Order on WhatsApp
             </a>
           )}
         </div>
 
-        <ul className="mt-6 space-y-2.5 border-t border-line pt-6 text-[13px] text-muted">
+        <ul className="mt-5 space-y-2 border-t border-line pt-5 text-[12px] text-muted">
           <li className="flex items-center gap-3">
             <Banknote className="h-4 w-4 shrink-0" strokeWidth={1.5} /> Cash on Delivery anywhere in Pakistan
           </li>
@@ -288,7 +288,7 @@ export function ProductView({
         </ul>
 
         {/* Details */}
-        <div className="mt-8 border-t border-line">
+        <div className="mt-6 border-t border-line">
           <Accordion title="Details" open>
             {product.description && <p>{product.description}</p>}
             {product.craftsmanshipNotes && <p className="mt-3">{product.craftsmanshipNotes}</p>}
