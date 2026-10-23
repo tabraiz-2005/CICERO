@@ -53,10 +53,10 @@ function NavLinks({ categories, onNavigate, vertical }: { categories: NavCategor
             vertical
               ? 'border-b border-line py-5 text-2xl font-bold tracking-[0.08em]'
               : cn(
-                  'whitespace-nowrap text-[13px] font-medium tracking-label',
-                  i >= 2 && 'hidden min-[1440px]:inline',
-                  i >= 4 && 'min-[1440px]:hidden min-[1800px]:inline'
-                ),
+                'whitespace-nowrap text-[13px] font-medium tracking-label',
+                i >= 2 && 'hidden min-[1440px]:inline',
+                i >= 4 && 'min-[1440px]:hidden min-[1800px]:inline'
+              ),
             l.active ? 'text-fg' : vertical ? 'text-fg' : 'text-fg/75'
           )}
         >

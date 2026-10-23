@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowUpRight, ShieldCheck, Sparkles, Truck, RotateCcw } from 'lucide-react';
+import { ArrowUpRight, ShieldCheck, Truck, RotateCcw } from 'lucide-react';
 import { getCategories, getCollections, getProducts, getSettings } from '@/lib/commerce/catalog';
 import { ProductCard } from '@/components/store/ProductCard';
 import { GarmentArt } from '@/components/store/GarmentArt';
@@ -23,31 +23,44 @@ export default async function HomePage() {
   return (
     <>
       {/* Campaign hero */}
-      <section className="relative min-h-[calc(100svh-110px)] overflow-hidden border-b border-line">
-        <div className="absolute inset-0 lg:left-[40%]">
-          {settings.hero_image_url ? (
-            <Img src={settings.hero_image_url} alt={settings.hero_title} sizes="(max-width:1024px) 100vw, 60vw" priority />
-          ) : (
-            <GarmentArt category="coat" className="bg-surface" />
-          )}
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/75 to-bg/10 lg:bg-gradient-to-r lg:from-bg lg:via-bg/80 lg:via-[42%] lg:to-transparent lg:to-[72%]" />
-        <div className="site-x relative flex min-h-[calc(100svh-110px)] flex-col justify-end pb-14 pt-[280px] lg:justify-center lg:py-24">
-          <div className="max-w-[860px]">
-            <span className="inline-flex items-center gap-3 border border-line-strong bg-surface/80 px-6 py-3.5 font-display text-[11px] uppercase tracking-label backdrop-blur sm:text-[13px]">
-              <Sparkles className="h-4 w-4" strokeWidth={1.5} /> {settings.hero_eyebrow}
-            </span>
-            <h1 className="display mt-8 text-[44px] sm:text-[64px] lg:mt-10 lg:text-[88px]">{settings.hero_title}</h1>
-            <p className="mt-6 font-display text-sm font-semibold uppercase tracking-wide2 text-muted lg:text-base">{settings.tagline}</p>
-            <p className="mt-6 max-w-xl text-lg font-light text-fg/90 lg:text-2xl">{settings.hero_subtitle}</p>
-            <div className="mt-10 flex flex-wrap gap-4">
-              <Link href={settings.hero_cta_href || '/shop'} className="btn-primary sm:h-16 sm:px-12">
+      <section className="relative h-[calc(100svh-110px)] min-h-[560px] overflow-hidden border-b border-line bg-black">
+        {settings.hero_image_url ? (
+          <Img
+            src={settings.hero_image_url}
+            alt={settings.hero_title}
+            sizes="100vw"
+            priority
+            className="object-cover object-[72%_center] lg:object-center"
+          />
+        ) : (
+          <GarmentArt category="coat" className="bg-surface" />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent lg:bg-gradient-to-r lg:from-black/80 lg:via-black/35 lg:via-[38%] lg:to-transparent lg:to-[62%]" />
+        <div className="site-x relative flex h-full flex-col justify-end pb-14 lg:justify-center lg:pb-0">
+          <div className="max-w-[720px] text-white">
+            <p className="font-display text-[11px] uppercase tracking-[0.32em] text-white/75 sm:text-[12px]">{settings.hero_eyebrow}</p>
+            <h1 className="mt-5 font-display text-[44px] font-light uppercase leading-[1.02] tracking-[0.06em] sm:text-[60px] lg:text-[72px]">
+              {settings.hero_title}
+            </h1>
+            <div className="mt-6 h-px w-16 bg-white/50" />
+            <p className="mt-6 max-w-[440px] text-[15px] leading-relaxed text-white/85 lg:text-[17px]">{settings.hero_subtitle}</p>
+            <div className="mt-9 flex flex-wrap gap-3">
+              <Link
+                href={settings.hero_cta_href || '/shop'}
+                className="inline-flex h-12 items-center justify-center bg-white px-9 font-display text-[12px] font-medium uppercase tracking-[0.24em] text-[#141213] transition-opacity hover:opacity-90 sm:h-14"
+              >
                 {settings.hero_cta_label}
               </Link>
-              <Link href="/men" className="btn-outline bg-bg/40 backdrop-blur sm:h-16">
+              <Link
+                href="/men"
+                className="inline-flex h-12 items-center justify-center border border-white/60 px-7 font-display text-[12px] font-medium uppercase tracking-[0.24em] text-white transition-colors hover:bg-white hover:text-[#141213] sm:h-14"
+              >
                 Men
               </Link>
-              <Link href="/women" className="btn-outline bg-bg/40 backdrop-blur sm:h-16">
+              <Link
+                href="/women"
+                className="inline-flex h-12 items-center justify-center border border-white/60 px-7 font-display text-[12px] font-medium uppercase tracking-[0.24em] text-white transition-colors hover:bg-white hover:text-[#141213] sm:h-14"
+              >
                 Women
               </Link>
             </div>
