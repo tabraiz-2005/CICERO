@@ -19,15 +19,11 @@ export default async function StoreLayout({ children }: { children: React.ReactN
       <CartProvider>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(storeJsonLd(settings, env.siteUrl)).replace(/</g, '\\u003c') }} />
         <div className="flex min-h-screen flex-col">
-          <div className="bg-brand text-brand-ink">
-            {settings.announcement_enabled && settings.announcement_text ? (
-              <p className="site-x py-2 text-center font-display text-[10px] uppercase tracking-label sm:text-[11px]">
-                {settings.announcement_text}
-              </p>
-            ) : (
-              <div className="h-1.5" />
-            )}
-          </div>
+          {settings.announcement_enabled && settings.announcement_text && (
+            <div className="border-b border-line bg-surface text-fg/75">
+              <p className="site-x py-2.5 text-center text-[11px] tracking-[0.08em] sm:text-[12px]">{settings.announcement_text}</p>
+            </div>
+          )}
           <Header storeName={settings.store_name} categories={nav} />
           <main className="flex-1">{children}</main>
           <Footer settings={settings} categories={nav} />

@@ -89,7 +89,7 @@ export function Header({ storeName, categories }: { storeName: string; categorie
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const pathname = usePathname();
-  const overlayPage = pathname.startsWith('/products/');
+  const overlayPage = false;
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {

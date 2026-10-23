@@ -51,8 +51,8 @@ export function CartDrawer({ freeShippingThreshold }: { freeShippingThreshold: n
       <div className="absolute inset-0 bg-black/60 animate-fade-in" onClick={close} />
       <aside className="absolute right-0 top-0 flex h-full w-full max-w-[480px] flex-col border-l border-line bg-bg animate-slide-in">
         <div className="flex h-[72px] items-center justify-between border-b border-line px-6 lg:h-[100px] lg:px-8">
-          <h2 className="font-display text-sm font-bold uppercase tracking-label">
-            Bag <span className="text-muted">({itemCount})</span>
+          <h2 className="font-display text-[15px] font-normal tracking-[0.18em]">
+            Your selection <span className="text-muted">({itemCount})</span>
           </h2>
           <button onClick={close} aria-label="Close bag" className="-mr-2 p-2">
             <X className="h-5 w-5" />

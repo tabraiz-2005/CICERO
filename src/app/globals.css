@@ -84,22 +84,22 @@
     @apply bg-surface-2;
   }
   .chip-active {
-    @apply border-brand bg-brand font-bold text-brand-ink hover:text-brand-ink;
+    @apply border-fg bg-fg font-semibold text-bg hover:text-bg;
   }
   .btn {
     @apply inline-flex items-center justify-center gap-3 font-display text-xs font-bold uppercase tracking-label transition-colors disabled:cursor-not-allowed disabled:opacity-40;
   }
   .btn-primary {
-    @apply btn h-14 bg-brand px-8 text-brand-ink hover:bg-brand/85;
+    @apply btn h-14 bg-fg px-8 font-medium tracking-[0.24em] text-bg hover:bg-fg/85;
   }
   .btn-outline {
-    @apply btn h-14 border border-line-strong px-8 text-fg hover:border-brand hover:text-brand;
+    @apply btn h-14 border border-line-strong px-8 font-medium tracking-[0.24em] text-fg hover:border-fg;
   }
   .btn-ghost {
     @apply btn h-10 px-4 text-muted hover:text-fg;
   }
   .field {
-    @apply h-12 w-full border border-line bg-surface px-4 text-sm text-fg placeholder:text-subtle focus:border-brand focus:outline-none;
+    @apply h-12 w-full border border-line bg-surface px-4 text-sm text-fg placeholder:text-subtle focus:border-fg focus:outline-none;
   }
   .field-label {
     @apply mb-2 block font-display text-[11px] uppercase tracking-label text-muted;
