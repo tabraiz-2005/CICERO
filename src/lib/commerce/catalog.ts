@@ -180,6 +180,52 @@ const getAllActiveProducts = cache(async (): Promise<Product[]> => {
   return (data ?? []).map(mapProduct);
 });
 
+/** Which garments lead the shop window: outerwear and knitwear first, basics last. */
+const SHOWCASE = ['wool-coats', 'jackets', 'sweaters', 'cardigans', 'hoodies', 'sweatshirts', 'tracksuits', 'trousers', 'denim-jeans', 'shorts', 'accessories'];
+const showcaseRank = (slug: string) => {
+  const i = SHOWCASE.indexOf(slug);
+  return i === -1 ? SHOWCASE.length : i;
+};
+
+/**
+ * Presentable default order: products are grouped by category (featured first,
+ * then newest), and the groups are dealt out in turn — coat, jacket, sweater,
+ * cardigan, hoodie… — so no single category floods the top of the page.
+ */
+export function arrange(products: Product[]): Product[] {
+  const groups = new Map<string, Product[]>();
+  for (const p of products) {
+    const g = groups.get(p.category) ?? [];
+    g.push(p);
+    groups.set(p.category, g);
+  }
+  const ordered = Array.from(groups.entries())
+    .sort(([a], [b]) => showcaseRank(a) - showcaseRank(b))
+    .map(([, list]) => list.sort((a, b) => Number(Boolean(b.isFeatured)) - Number(Boolean(a.isFeatured))));
+  const out: Product[] = [];
+  for (let round = 0; out.length < products.length; round++) {
+    for (const list of ordered) if (list[round]) out.push(list[round]);
+  }
+  return out;
+}
+
+/** Newest pieces, at most one per category, so "New arrivals" shows the range. */
+export function newestMix(recentFirst: Product[], count: number): Product[] {
+  const seen = new Set<string>();
+  const picks: Product[] = [];
+  for (const p of recentFirst) {
+    if (picks.length >= count) break;
+    if (seen.has(p.category)) continue;
+    seen.add(p.category);
+    picks.push(p);
+  }
+  for (const p of recentFirst) {
+    if (picks.length >= count) break;
+    if (!picks.includes(p)) picks.push(p);
+  }
+  return picks;
+}
+
 export async function getProducts(filter: ProductFilter = {}): Promise<Product[]> {
   let products = await getAllActiveProducts();
 
@@ -213,7 +259,7 @@ export async function getProducts(filter: ProductFilter = {}): Promise<Product[]
       sorted.sort((a, b) => Number(Boolean(b.isNewArrival)) - Number(Boolean(a.isNewArrival)));
       break;
     default:
-      sorted.sort((a, b) => Number(Boolean(b.isFeatured)) - Number(Boolean(a.isFeatured)));
+      return filter.limit ? arrange(sorted).slice(0, filter.limit) : arrange(sorted);
   }
   return filter.limit ? sorted.slice(0, filter.limit) : sorted;
 }

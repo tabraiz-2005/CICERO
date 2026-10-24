@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ArrowUpRight, ShieldCheck, Truck, RotateCcw } from 'lucide-react';
-import { getCollections, getProducts, getSettings } from '@/lib/commerce/catalog';
+import { arrange, getCollections, getProducts, getSettings, newestMix } from '@/lib/commerce/catalog';
 import { ProductCard } from '@/components/store/ProductCard';
 import { GarmentArt } from '@/components/store/GarmentArt';
 import { Img } from '@/components/ui/Img';
@@ -12,11 +12,11 @@ export default async function HomePage() {
     getCollections(),
     getProducts({ sort: 'recent' }),
   ]);
-  const newest = all.slice(0, 4);
+  const newest = newestMix(all, 4);
   const newIds = new Set(newest.map((p) => p.id));
-  const featuredRest = all.filter((p) => p.isFeatured && !newIds.has(p.id)).slice(0, 4);
+  const featuredRest = arrange(all.filter((p) => p.isFeatured && !newIds.has(p.id))).slice(0, 4);
   const shownIds = new Set(newest.concat(featuredRest).map((p) => p.id));
-  const everything = all.filter((p) => !shownIds.has(p.id));
+  const everything = arrange(all.filter((p) => !shownIds.has(p.id)));
   const ALL_LIMIT = 24;
 
   return (
