@@ -11,6 +11,7 @@ import {
   type ProductVariant,
   type StoreSettings,
 } from './types';
+import { ensureDefaultCategories, menuOrder } from './default-categories';
 
 /* -------------------------------------------------------------------------- */
 /*  Public (read-only) Supabase client — no cookies, so pages stay cacheable   */
@@ -252,19 +253,24 @@ export async function getRelatedProducts(product: Product, limit = 4): Promise<P
 export const getCategories = cache(async (): Promise<CategoryItem[]> => {
   const client = db();
   if (!client) return [];
-  const [{ data, error }, products] = await Promise.all([
+  const load = () =>
     client
       .from('categories')
-      .select('id, slug, name, gender, description, hero_image_url')
-      .eq('is_active', true)
-      .order('sort_order'),
-    getAllActiveProducts(),
-  ]);
+      .select('id, slug, name, gender, description, hero_image_url, is_active')
+      .order('sort_order');
+  const [first, products] = await Promise.all([load(), getAllActiveProducts()]);
+  let { data, error } = first;
+  if (!error && (await ensureDefaultCategories((data ?? []).map((c: Row) => c.slug)))) {
+    ({ data, error } = await load());
+  }
   if (error) {
     logError('categories', error);
     return [];
   }
-  return (data ?? []).map((c: Row) => ({
+  const rows = (data ?? [])
+    .filter((c: Row) => c.is_active)
+    .sort((a: Row, b: Row) => menuOrder(a.slug) - menuOrder(b.slug));
+  return rows.map((c: Row) => ({
     id: c.id,
     slug: c.slug,
     name: c.name,
