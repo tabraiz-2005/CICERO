@@ -90,7 +90,7 @@ export default async function HomePage() {
         <section className="site-x pt-14 lg:pt-20">
           <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-4">
             <div>
-              <p className="text-[11px] uppercase tracking-[0.24em] text-muted">Garment system // All</p>
+              <p className="text-[11px] uppercase tracking-[0.24em] text-muted">The collection</p>
               <h2 className="mt-2 font-display text-[20px] font-normal uppercase tracking-[0.08em] lg:text-[24px]">All pieces</h2>
             </div>
             <Link href="/shop" className="label link-u text-muted">
@@ -115,7 +115,7 @@ export default async function HomePage() {
         <section className="site-x pt-14 lg:pt-20">
           <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-4">
             <div>
-              <p className="text-[11px] uppercase tracking-[0.24em] text-muted">Garment system // Latest</p>
+              <p className="text-[11px] uppercase tracking-[0.24em] text-muted">Just in</p>
               <h2 className="mt-2 font-display text-[20px] font-normal uppercase tracking-[0.08em] lg:text-[24px]">New arrivals</h2>
             </div>
             <Link href="/shop?sort=newest" className="label link-u text-muted">
@@ -143,10 +143,8 @@ export default async function HomePage() {
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 p-6 text-white lg:p-10">
-                  <p className="font-display text-xs uppercase tracking-wide2 text-white/70">
-                    Collection // {c.season || 'Edit'} · {c.featuredProductsCount} pieces
-                  </p>
-                  <h3 className="display mt-3 text-4xl lg:text-6xl">{c.name}</h3>
+                  <p className="font-display text-xs uppercase tracking-wide2 text-white/70">Collection</p>
+                  <h3 className="mt-3 font-display text-[26px] font-normal uppercase tracking-[0.06em] lg:text-[34px]">{c.name}</h3>
                   {c.storyQuote && <p className="mt-4 max-w-md text-sm text-white/80">{c.storyQuote}</p>}
                   <span className="label mt-6 inline-flex items-center gap-2 border-b border-white pb-1">
                     Explore <ArrowUpRight className="h-4 w-4" />
@@ -163,7 +161,7 @@ export default async function HomePage() {
         <section className="site-x pt-14 lg:pt-20">
           <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-4">
             <div>
-              <p className="text-[11px] uppercase tracking-[0.24em] text-muted">Garment system // Core</p>
+              <p className="text-[11px] uppercase tracking-[0.24em] text-muted">Our picks</p>
               <h2 className="mt-2 font-display text-[20px] font-normal uppercase tracking-[0.08em] lg:text-[24px]">The essentials</h2>
             </div>
             <Link href="/shop" className="label link-u text-muted">
@@ -184,13 +182,13 @@ export default async function HomePage() {
           {[
             {
               icon: Truck,
-              title: 'Express shipping',
+              title: 'Delivery across Pakistan',
               text: settings.free_shipping_threshold
-                ? `Free on orders over ${formatCents(settings.free_shipping_threshold)}.`
-                : 'Tracked delivery on every order.',
+                ? `Tracked courier delivery. Free on orders over ${formatCents(settings.free_shipping_threshold)}.`
+                : 'Tracked courier delivery to your door.',
             },
-            { icon: RotateCcw, title: '30-day returns', text: 'Changed your mind? Send it back within 30 days.' },
-            { icon: ShieldCheck, title: 'Cash on Delivery', text: 'Pay when your order arrives, anywhere in Pakistan.' },
+            { icon: RotateCcw, title: 'Easy exchanges', text: 'Wrong size? Message us on WhatsApp and we will help you exchange it.' },
+            { icon: ShieldCheck, title: 'Cash on Delivery', text: 'Pay in cash when your parcel arrives, anywhere in Pakistan.' },
           ].map(({ icon: Icon, title, text }) => (
             <div key={title} className="flex gap-5 border-line p-8 [&:not(:last-child)]:border-b sm:[&:not(:last-child)]:border-b-0 sm:[&:not(:last-child)]:border-r lg:p-10">
               <Icon className="h-6 w-6 shrink-0" strokeWidth={1.4} />

@@ -9,7 +9,7 @@ export default function CartPage() {
   const { items, subtotal, itemCount, hydrated } = useCart();
   return (
     <div className="site-x pt-10 lg:pt-14">
-      <p className="eyebrow">Garment system // Bag</p>
+      <p className="eyebrow">Your selection</p>
       <h1 className="display mt-4 text-[40px] lg:text-[60px]">Your bag</h1>
       {hydrated && items.length === 0 ? (
         <div className="mt-10 flex flex-col items-start gap-6 border-t border-line pt-10">

@@ -153,7 +153,7 @@ export function CheckoutForm({ shipping }: { shipping: { standard: number; expre
 
   return (
     <div className="site-x pb-10 pt-10 lg:pt-14">
-      <p className="eyebrow">Garment system // Checkout</p>
+      <p className="eyebrow">Secure checkout · Cash on Delivery</p>
       <h1 className="display mt-4 text-[40px] lg:text-[60px]">Checkout</h1>
 
       {error && (

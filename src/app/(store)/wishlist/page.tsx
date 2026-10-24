@@ -11,7 +11,7 @@ export default function WishlistPage() {
   const { wishlist, removeItem } = useWishlist();
   return (
     <div className="site-x pt-10 lg:pt-14">
-      <p className="eyebrow">Garment system // Saved</p>
+      <p className="eyebrow">Saved for later</p>
       <h1 className="display mt-4 text-[40px] lg:text-[60px]">Wishlist</h1>
       <div className="mt-10 border-t border-line pt-10">
         {wishlist.length === 0 ? (
