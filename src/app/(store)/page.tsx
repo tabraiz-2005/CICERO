@@ -1,15 +1,14 @@
 import Link from 'next/link';
 import { ArrowUpRight, ShieldCheck, Truck, RotateCcw } from 'lucide-react';
-import { getCategories, getCollections, getProducts, getSettings } from '@/lib/commerce/catalog';
+import { getCollections, getProducts, getSettings } from '@/lib/commerce/catalog';
 import { ProductCard } from '@/components/store/ProductCard';
 import { GarmentArt } from '@/components/store/GarmentArt';
 import { Img } from '@/components/ui/Img';
 import { formatCents } from '@/lib/utils';
 
 export default async function HomePage() {
-  const [settings, categories, collections, all] = await Promise.all([
+  const [settings, collections, all] = await Promise.all([
     getSettings(),
-    getCategories(),
     getCollections(),
     getProducts({ sort: 'recent' }),
   ]);
@@ -59,31 +58,6 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* Garment index */}
-      {categories.length > 0 && (
-        <section className="site-x pt-12 lg:pt-20">
-          <div className="flex items-end justify-between gap-4">
-            <h2 className="font-display text-[20px] font-normal uppercase tracking-[0.08em] lg:text-[24px]">Shop by category</h2>
-            <Link href="/shop" className="text-[13px] text-muted underline underline-offset-4 hover:text-fg">View all</Link>
-          </div>
-          <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:mt-6 lg:grid-cols-5 lg:gap-3">
-            {categories.filter((c) => c.itemCount > 0).map((c) => (
-              <Link
-                key={c.slug}
-                href={`/shop?category=${c.slug}`}
-                className="group flex items-center justify-between border border-line px-4 py-4 transition-colors hover:border-fg lg:px-5 lg:py-5"
-              >
-                <span>
-                  <span className="block text-[13px] uppercase tracking-[0.12em] text-fg lg:text-[14px]">{c.name}</span>
-                  <span className="mt-1 block text-[12px] text-muted">{c.itemCount} {c.itemCount === 1 ? 'piece' : 'pieces'}</span>
-                </span>
-                <ArrowUpRight className="h-4 w-4 shrink-0 text-muted transition-colors group-hover:text-fg" strokeWidth={1.5} />
-              </Link>
-            ))}
-          </div>
-        </section>
-      )}
 
       {/* Everything else */}
       {everything.length > 0 && (

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { Heart, Menu, Search, ShoppingBag, X } from 'lucide-react';
+import { Heart, Home, Menu, Search, ShoppingBag, X } from 'lucide-react';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
@@ -53,6 +53,16 @@ function DeptMenu({ categories }: { categories: NavCategory[] }) {
 
   return (
     <div className="flex items-center gap-9" onMouseLeave={hide}>
+      <Link
+        href="/"
+        onMouseEnter={() => setOpen(null)}
+        className={cn(
+          'whitespace-nowrap py-9 font-display text-[13px] font-medium uppercase tracking-label transition-colors hover:text-fg',
+          pathname === '/' ? 'text-fg' : 'text-fg/75'
+        )}
+      >
+        Home
+      </Link>
       {DEPTS.map((d) => (
         <div key={d.key} onMouseEnter={() => show(d.key)}>
           <Link
@@ -169,6 +179,7 @@ function MobileMenu({
 
         <div className="mt-8 space-y-1 border-t border-line pt-6">
           {[
+            { href: '/', label: 'Home' },
             { href: '/about', label: 'About' },
             { href: '/contact', label: 'Contact' },
             { href: '/wishlist', label: `Wishlist${wishCount ? ` (${wishCount})` : ''}` },
@@ -214,6 +225,9 @@ export function Header({ storeName, categories }: { storeName: string; categorie
             <button className="-ml-2 p-2 lg:hidden" aria-label="Open menu" onClick={() => setMenuOpen(true)}>
               <Menu className="h-6 w-6" strokeWidth={1.5} />
             </button>
+            <Link href="/" className="p-2 lg:hidden" aria-label="Home">
+              <Home className="h-[22px] w-[22px]" strokeWidth={1.6} />
+            </Link>
             <div className="hidden lg:block">
               <Suspense fallback={null}>
                 <DeptMenu categories={categories} />
