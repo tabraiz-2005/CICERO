@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { Heart, Menu, Search, ShoppingBag, X } from 'lucide-react';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
@@ -14,7 +14,16 @@ import { Logo } from './Logo';
 export interface NavCategory {
   slug: string;
   name: string;
+  gender?: 'all' | 'men' | 'women';
 }
+
+type Dept = 'men' | 'women';
+const DEPTS: { key: Dept; label: string }[] = [
+  { key: 'men', label: 'Men' },
+  { key: 'women', label: 'Women' },
+];
+
+const forDept = (cats: NavCategory[], d: Dept) => cats.filter((c) => !c.gender || c.gender === 'all' || c.gender === d);
 
 function Count({ n }: { n: number }) {
   if (!n) return null;
@@ -25,61 +34,156 @@ function Count({ n }: { n: number }) {
   );
 }
 
-function NavLinks({ categories, onNavigate, vertical }: { categories: NavCategory[]; onNavigate?: () => void; vertical?: boolean }) {
+/** Desktop: Men / Women with a category panel on hover. */
+function DeptMenu({ categories }: { categories: NavCategory[] }) {
   const pathname = usePathname();
   const params = useSearchParams();
-  const links = [
-    { href: '/men', label: 'Men', active: pathname === '/men' },
-    { href: '/women', label: 'Women', active: pathname === '/women' },
-    ...categories.map((c) => ({
-      href: `/shop?category=${c.slug}`,
-      label: c.name,
-      active: pathname === '/shop' && params.get('category') === c.slug,
-    })),
-  ];
-  const extra = [
-    { href: '/about', label: 'About', active: pathname === '/about' },
-    { href: '/contact', label: 'Contact', active: pathname === '/contact' },
-  ];
+  const [open, setOpen] = useState<Dept | null>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const show = (d: Dept) => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setOpen(d);
+  };
+  const hide = () => {
+    closeTimer.current = setTimeout(() => setOpen(null), 120);
+  };
+
+  useEffect(() => setOpen(null), [pathname, params]);
+
   return (
-    <>
-      {links.map((l, i) => (
-        <Link
-          key={l.href}
-          href={l.href}
-          onClick={onNavigate}
-          className={cn(
-            'font-display uppercase transition-colors hover:text-fg',
-            vertical
-              ? 'border-b border-line py-5 text-2xl font-bold tracking-[0.08em]'
-              : cn(
-                'whitespace-nowrap text-[13px] font-medium tracking-label',
-                i >= 2 && 'hidden min-[1440px]:inline',
-                i >= 4 && 'min-[1440px]:hidden min-[1800px]:inline'
-              ),
-            l.active ? 'text-fg' : vertical ? 'text-fg' : 'text-fg/75'
-          )}
-        >
-          {l.label}
-        </Link>
+    <div className="flex items-center gap-9" onMouseLeave={hide}>
+      {DEPTS.map((d) => (
+        <div key={d.key} onMouseEnter={() => show(d.key)}>
+          <Link
+            href={`/${d.key}`}
+            onFocus={() => show(d.key)}
+            className={cn(
+              'whitespace-nowrap py-9 font-display text-[13px] font-medium uppercase tracking-label transition-colors hover:text-fg',
+              pathname.startsWith(`/${d.key}`) || open === d.key ? 'text-fg' : 'text-fg/75'
+            )}
+          >
+            {d.label}
+          </Link>
+        </div>
       ))}
-      {vertical && extra.map((l) => (
-        <Link
-          key={l.href}
-          href={l.href}
-          onClick={onNavigate}
-          className={cn(
-            'font-display uppercase transition-colors hover:text-fg',
-            vertical
-              ? 'border-b border-line py-5 text-2xl font-bold tracking-[0.08em]'
-              : 'whitespace-nowrap text-[13px] font-medium tracking-label',
-            l.active ? 'text-fg' : vertical ? 'text-fg' : 'text-fg/75'
-          )}
+
+      {open && (
+        <div
+          onMouseEnter={() => show(open)}
+          className="absolute inset-x-0 top-full border-b border-line bg-bg shadow-2xl animate-fade-in"
         >
-          {l.label}
-        </Link>
-      ))}
-    </>
+          <div className="site-x grid grid-cols-[200px_1fr] gap-12 py-10">
+            <div>
+              <p className="font-display text-[12px] uppercase tracking-[0.2em] text-muted">{open === 'men' ? 'Men' : 'Women'}</p>
+              <Link href={`/${open}`} className="mt-4 block font-display text-[15px] uppercase tracking-[0.12em] text-fg hover:underline">
+                View all
+              </Link>
+            </div>
+            <div>
+              <p className="font-display text-[12px] uppercase tracking-[0.2em] text-muted">Shop by category</p>
+              <ul className="mt-4 grid grid-flow-col grid-rows-5 auto-cols-[220px] gap-x-10 gap-y-3">
+                {forDept(categories, open).map((c) => (
+                  <li key={c.slug}>
+                    <Link
+                      href={`/${open}?category=${c.slug}`}
+                      className={cn(
+                        'font-display text-[14px] uppercase tracking-[0.08em] transition-colors hover:text-fg',
+                        pathname === `/${open}` && params.get('category') === c.slug ? 'text-fg' : 'text-fg/70'
+                      )}
+                    >
+                      {c.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** Mobile drawer: Men / Women tabs, then the category list. */
+function MobileMenu({
+  storeName,
+  categories,
+  wishCount,
+  onClose,
+}: {
+  storeName: string;
+  categories: NavCategory[];
+  wishCount: number;
+  onClose: () => void;
+}) {
+  const pathname = usePathname();
+  const [dept, setDept] = useState<Dept>(pathname.startsWith('/women') ? 'women' : 'men');
+
+  return (
+    <div className="fixed inset-0 z-50 flex flex-col bg-bg animate-fade-in lg:hidden">
+      <div className="site-x flex h-[72px] shrink-0 items-center justify-between border-b border-line">
+        <button className="-ml-2 p-2" aria-label="Close menu" onClick={onClose}>
+          <X className="h-6 w-6" strokeWidth={1.5} />
+        </button>
+        <Logo title={storeName} className="w-[118px]" />
+        <span className="w-10" />
+      </div>
+
+      <div className="site-x flex shrink-0 gap-8 border-b border-line">
+        {DEPTS.map((d) => (
+          <button
+            key={d.key}
+            type="button"
+            onClick={() => setDept(d.key)}
+            className={cn(
+              '-mb-px border-b-2 py-4 font-display text-[15px] uppercase tracking-[0.12em]',
+              dept === d.key ? 'border-fg text-fg' : 'border-transparent text-muted'
+            )}
+          >
+            {d.label}
+          </button>
+        ))}
+      </div>
+
+      <nav className="site-x flex-1 overflow-y-auto pb-10 pt-6">
+        <p className="font-display text-[12px] font-semibold uppercase tracking-[0.18em] text-fg">Shop by categories</p>
+        <ul className="mt-4 space-y-1">
+          <li>
+            <Link href={`/${dept}`} onClick={onClose} className="block py-2 font-display text-[16px] uppercase tracking-[0.06em] text-fg">
+              View all
+            </Link>
+          </li>
+          {forDept(categories, dept).map((c) => (
+            <li key={c.slug}>
+              <Link
+                href={`/${dept}?category=${c.slug}`}
+                onClick={onClose}
+                className="block py-2 font-display text-[16px] uppercase tracking-[0.06em] text-fg/85"
+              >
+                {c.name}
+              </Link>
+            </li>
+          ))}
+        </ul>
+
+        <div className="mt-8 space-y-1 border-t border-line pt-6">
+          {[
+            { href: '/about', label: 'About' },
+            { href: '/contact', label: 'Contact' },
+            { href: '/wishlist', label: `Wishlist${wishCount ? ` (${wishCount})` : ''}` },
+          ].map((l) => (
+            <Link key={l.href} href={l.href} onClick={onClose} className="block py-2 text-[14px] text-muted">
+              {l.label}
+            </Link>
+          ))}
+        </div>
+        <div className="mt-6 flex items-center justify-between">
+          <span className="text-[13px] text-muted">Appearance</span>
+          <ThemeToggle />
+        </div>
+      </nav>
+    </div>
   );
 }
 
@@ -89,17 +193,6 @@ export function Header({ storeName, categories }: { storeName: string; categorie
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const pathname = usePathname();
-  const overlayPage = pathname.startsWith('/products/');
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  const transparent = overlayPage && !scrolled;
 
   useEffect(() => {
     setMenuOpen(false);
@@ -115,29 +208,20 @@ export function Header({ storeName, categories }: { storeName: string; categorie
 
   return (
     <>
-      <header
-        className={cn(
-          'sticky top-0 z-40 border-b transition-colors duration-300',
-          transparent ? 'border-transparent bg-transparent' : 'border-line bg-bg/95 backdrop-blur'
-        )}
-      >
+      <header className="sticky top-0 z-40 border-b border-line bg-bg/95 backdrop-blur">
         <div className="site-x grid h-[72px] grid-cols-[1fr_auto_1fr] items-center lg:h-[100px]">
-          <nav className="flex items-center gap-6 xl:gap-11" aria-label="Main">
+          <nav className="flex items-center" aria-label="Main">
             <button className="-ml-2 p-2 lg:hidden" aria-label="Open menu" onClick={() => setMenuOpen(true)}>
               <Menu className="h-6 w-6" strokeWidth={1.5} />
             </button>
-            <div className="hidden items-center gap-7 lg:flex xl:gap-11">
+            <div className="hidden lg:block">
               <Suspense fallback={null}>
-                <NavLinks categories={categories} />
+                <DeptMenu categories={categories} />
               </Suspense>
             </div>
           </nav>
 
-          <Link
-            href="/"
-            className="block text-fg"
-            aria-label={`${storeName} home`}
-          >
+          <Link href="/" className="block text-fg" aria-label={`${storeName} home`}>
             <Logo title={storeName} className="w-[118px] sm:w-[140px] lg:w-[160px] min-[1440px]:w-[188px]" />
           </Link>
 
@@ -178,31 +262,7 @@ export function Header({ storeName, categories }: { storeName: string; categorie
         </div>
       </header>
 
-      {menuOpen && (
-        <div className="fixed inset-0 z-50 flex flex-col bg-bg animate-fade-in lg:hidden">
-          <div className="site-x flex h-[72px] items-center justify-between border-b border-line">
-            <Logo title={storeName} className="w-[118px]" />
-            <button className="-mr-2 p-2" aria-label="Close menu" onClick={() => setMenuOpen(false)}>
-              <X className="h-6 w-6" strokeWidth={1.5} />
-            </button>
-          </div>
-          <nav className="site-x flex flex-1 flex-col overflow-y-auto pt-4">
-            <Suspense fallback={null}>
-              <NavLinks categories={categories} vertical onNavigate={() => setMenuOpen(false)} />
-            </Suspense>
-            <Link href="/shop" className="border-b border-line py-5 font-display text-2xl font-bold uppercase tracking-[0.08em] text-muted">
-              All pieces
-            </Link>
-            <Link href="/wishlist" className="border-b border-line py-5 font-display text-sm uppercase tracking-label text-muted">
-              Wishlist {count > 0 && `(${count})`}
-            </Link>
-            <div className="flex items-center justify-between py-6">
-              <span className="font-display text-xs uppercase tracking-label text-muted">Appearance</span>
-              <ThemeToggle />
-            </div>
-          </nav>
-        </div>
-      )}
+      {menuOpen && <MobileMenu storeName={storeName} categories={categories} wishCount={count} onClose={() => setMenuOpen(false)} />}
 
       <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
     </>

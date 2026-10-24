@@ -12,7 +12,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function StoreLayout({ children }: { children: React.ReactNode }) {
   const [settings, categories] = await Promise.all([getSettings(), getCategories()]);
-  const nav = categories.map((c) => ({ slug: c.slug, name: c.name }));
+  const nav = categories.map((c) => ({ slug: c.slug, name: c.name, gender: c.gender }));
 
   return (
     <WishlistProvider>

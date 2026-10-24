@@ -76,7 +76,7 @@ export default async function HomePage() {
             <Link href="/shop" className="text-[13px] text-muted underline underline-offset-4 hover:text-fg">View all</Link>
           </div>
           <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:mt-6 lg:grid-cols-5 lg:gap-3">
-            {categories.map((c) => (
+            {categories.filter((c) => c.itemCount > 0).map((c) => (
               <Link
                 key={c.slug}
                 href={`/shop?category=${c.slug}`}

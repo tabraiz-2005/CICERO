@@ -43,8 +43,9 @@ export async function Catalogue({
 }) {
   const gender: G = fixedGender ?? (params.gender === 'men' || params.gender === 'women' ? params.gender : 'all');
   const sort = SORTS.includes(params.sort as SortKey) ? (params.sort as SortKey) : 'featured';
-  const categories = await getCategories();
-  const category = categories.find((c) => c.slug === params.category);
+  const allCategories = await getCategories();
+  const categories = allCategories.filter((c) => gender === 'all' || c.gender === 'all' || c.gender === gender);
+  const category = allCategories.find((c) => c.slug === params.category);
 
   const [products, inGender] = await Promise.all([
     getProducts({ gender, category: category?.slug, collection: params.collection, search: params.q, sort }),
@@ -108,7 +109,6 @@ export async function Catalogue({
           <div className="sticky top-28 pt-8">
             <p className="label text-fg">Department</p>
             <div className="mt-3 border-b border-line pb-5">
-              {deptLink('all', 'All')}
               {deptLink('men', 'Men')}
               {deptLink('women', 'Women')}
             </div>
@@ -147,7 +147,7 @@ export async function Catalogue({
           {/* Mobile filters */}
           <div className="sticky top-[72px] z-20 -mx-4 border-b border-line bg-bg/95 px-4 backdrop-blur sm:-mx-8 sm:px-8 lg:hidden">
             <div className="flex gap-2 overflow-x-auto py-3 no-scrollbar">
-              {(['all', 'men', 'women'] as G[]).map((g) => (
+              {(['men', 'women'] as G[]).map((g) => (
                 <Link
                   key={g}
                   href={href(g, category?.slug, sort, extra)}
