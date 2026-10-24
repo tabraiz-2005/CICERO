@@ -39,27 +39,19 @@ export default async function HomePage() {
         <div className="site-x relative flex h-full flex-col justify-end pb-14 lg:justify-center lg:pb-0">
           <div className="max-w-[720px] text-white">
             <p className="font-display text-[11px] uppercase tracking-[0.32em] text-white/75 sm:text-[12px]">{settings.hero_eyebrow}</p>
-            <h1 className="mt-5 font-display text-[44px] font-light uppercase leading-[1.02] tracking-[0.06em] sm:text-[60px] lg:text-[72px]">
+            <h1 className="mt-4 font-display text-[40px] font-light uppercase leading-[1.02] tracking-[0.06em] sm:text-[56px] lg:text-[72px]">
               {settings.hero_title}
             </h1>
-            <div className="mt-6 h-px w-16 bg-white/50" />
-            <p className="mt-6 max-w-[440px] text-[15px] leading-relaxed text-white/85 lg:text-[17px]">{settings.hero_subtitle}</p>
-            <div className="mt-9 flex flex-wrap gap-3">
-              <Link
-                href={settings.hero_cta_href || '/shop'}
-                className="inline-flex h-12 items-center justify-center bg-white px-9 font-display text-[12px] font-medium uppercase tracking-[0.24em] text-[#141213] transition-opacity hover:opacity-90 sm:h-14"
-              >
-                {settings.hero_cta_label}
-              </Link>
+            <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 href="/men"
-                className="inline-flex h-12 items-center justify-center border border-white/60 px-7 font-display text-[12px] font-medium uppercase tracking-[0.24em] text-white transition-colors hover:bg-white hover:text-[#141213] sm:h-14"
+                className="inline-flex h-12 min-w-[140px] items-center justify-center border border-white bg-white/0 px-8 font-display text-[12px] font-medium uppercase tracking-[0.24em] text-white transition-colors hover:bg-white hover:text-[#141213] sm:h-14 sm:min-w-[170px]"
               >
                 Men
               </Link>
               <Link
                 href="/women"
-                className="inline-flex h-12 items-center justify-center border border-white/60 px-7 font-display text-[12px] font-medium uppercase tracking-[0.24em] text-white transition-colors hover:bg-white hover:text-[#141213] sm:h-14"
+                className="inline-flex h-12 min-w-[140px] items-center justify-center border border-white bg-white/0 px-8 font-display text-[12px] font-medium uppercase tracking-[0.24em] text-white transition-colors hover:bg-white hover:text-[#141213] sm:h-14 sm:min-w-[170px]"
               >
                 Women
               </Link>
