@@ -70,21 +70,23 @@ export default async function HomePage() {
 
       {/* Garment index */}
       {categories.length > 0 && (
-        <section className="site-x pt-20 lg:pt-28">
-          <p className="eyebrow">Garment system // Index</p>
-          <div className="mt-8 border-t border-line">
-            {categories.map((c, i) => (
+        <section className="site-x pt-12 lg:pt-20">
+          <div className="flex items-end justify-between gap-4">
+            <h2 className="font-display text-[20px] font-normal uppercase tracking-[0.08em] lg:text-[24px]">Shop by category</h2>
+            <Link href="/shop" className="text-[13px] text-muted underline underline-offset-4 hover:text-fg">View all</Link>
+          </div>
+          <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:mt-6 lg:grid-cols-5 lg:gap-3">
+            {categories.map((c) => (
               <Link
                 key={c.slug}
                 href={`/shop?category=${c.slug}`}
-                className="group grid grid-cols-[48px_1fr_auto] items-center gap-4 border-b border-line py-6 transition-colors hover:bg-surface sm:grid-cols-[80px_1fr_auto_auto] lg:py-9"
+                className="group flex items-center justify-between border border-line px-4 py-4 transition-colors hover:border-fg lg:px-5 lg:py-5"
               >
-                <span className="font-display text-sm text-subtle">{String(i + 1).padStart(2, '0')}</span>
-                <span className="display text-3xl transition-transform group-hover:translate-x-2 sm:text-4xl lg:text-[52px]">{c.name}</span>
-                <span className="hidden max-w-xs text-right text-sm text-muted sm:block">{c.description}</span>
-                <span className="flex items-center gap-3 font-display text-xs uppercase tracking-label text-muted">
-                  {c.itemCount} <ArrowUpRight className="h-5 w-5 text-fg" strokeWidth={1.5} />
+                <span>
+                  <span className="block text-[13px] uppercase tracking-[0.12em] text-fg lg:text-[14px]">{c.name}</span>
+                  <span className="mt-1 block text-[12px] text-muted">{c.itemCount} {c.itemCount === 1 ? 'piece' : 'pieces'}</span>
                 </span>
+                <ArrowUpRight className="h-4 w-4 shrink-0 text-muted transition-colors group-hover:text-fg" strokeWidth={1.5} />
               </Link>
             ))}
           </div>
@@ -93,17 +95,17 @@ export default async function HomePage() {
 
       {/* Everything else */}
       {everything.length > 0 && (
-        <section className="site-x pt-24 lg:pt-32">
-          <div className="flex flex-wrap items-end justify-between gap-6 border-b border-line pb-8">
+        <section className="site-x pt-14 lg:pt-20">
+          <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-4">
             <div>
-              <p className="eyebrow">Garment system // All</p>
-              <h2 className="display mt-4 text-[40px] lg:text-[60px]">All pieces</h2>
+              <p className="text-[11px] uppercase tracking-[0.24em] text-muted">Garment system // All</p>
+              <h2 className="mt-2 font-display text-[20px] font-normal uppercase tracking-[0.08em] lg:text-[24px]">All pieces</h2>
             </div>
             <Link href="/shop" className="label link-u text-muted">
               Shop all {all.length}
             </Link>
           </div>
-          <div className="mt-10 grid grid-cols-2 gap-x-3 gap-y-10 md:grid-cols-3 lg:gap-x-[42px] xl:grid-cols-4">
+          <div className="mt-6 grid grid-cols-2 gap-x-3 gap-y-8 sm:gap-x-5 md:grid-cols-3 lg:gap-x-6 lg:gap-y-12 xl:grid-cols-4">
             {everything.slice(0, ALL_LIMIT).map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
@@ -118,17 +120,17 @@ export default async function HomePage() {
 
       {/* New arrivals */}
       {newest.length > 0 && (
-        <section className="site-x pt-24 lg:pt-32">
-          <div className="flex flex-wrap items-end justify-between gap-6 border-b border-line pb-8">
+        <section className="site-x pt-14 lg:pt-20">
+          <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-4">
             <div>
-              <p className="eyebrow">Garment system // Latest</p>
-              <h2 className="display mt-4 text-[40px] lg:text-[60px]">New arrivals</h2>
+              <p className="text-[11px] uppercase tracking-[0.24em] text-muted">Garment system // Latest</p>
+              <h2 className="mt-2 font-display text-[20px] font-normal uppercase tracking-[0.08em] lg:text-[24px]">New arrivals</h2>
             </div>
             <Link href="/shop?sort=newest" className="label link-u text-muted">
               View all
             </Link>
           </div>
-          <div className="mt-10 grid grid-cols-2 gap-x-3 gap-y-10 md:grid-cols-3 lg:gap-x-[42px] xl:grid-cols-4">
+          <div className="mt-6 grid grid-cols-2 gap-x-3 gap-y-8 sm:gap-x-5 md:grid-cols-3 lg:gap-x-6 lg:gap-y-12 xl:grid-cols-4">
             {newest.map((p, i) => (
               <ProductCard key={p.id} product={p} priority={i < 2} />
             ))}
@@ -138,7 +140,7 @@ export default async function HomePage() {
 
       {/* Collections */}
       {collections.length > 0 && (
-        <section className="site-x pt-24 lg:pt-32">
+        <section className="site-x pt-14 lg:pt-20">
           <div className="grid gap-3 md:grid-cols-2 lg:gap-[42px]">
             {collections.slice(0, 2).map((c) => (
               <Link key={c.slug} href={`/collections/${c.slug}`} className="group relative block aspect-[4/5] overflow-hidden border border-line sm:aspect-[16/11]">
@@ -166,17 +168,17 @@ export default async function HomePage() {
 
       {/* Featured */}
       {featuredRest.length > 0 && (
-        <section className="site-x pt-24 lg:pt-32">
-          <div className="flex flex-wrap items-end justify-between gap-6 border-b border-line pb-8">
+        <section className="site-x pt-14 lg:pt-20">
+          <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-4">
             <div>
-              <p className="eyebrow">Garment system // Core</p>
-              <h2 className="display mt-4 text-[40px] lg:text-[60px]">The essentials</h2>
+              <p className="text-[11px] uppercase tracking-[0.24em] text-muted">Garment system // Core</p>
+              <h2 className="mt-2 font-display text-[20px] font-normal uppercase tracking-[0.08em] lg:text-[24px]">The essentials</h2>
             </div>
             <Link href="/shop" className="label link-u text-muted">
               Full catalogue
             </Link>
           </div>
-          <div className="mt-10 grid grid-cols-2 gap-x-3 gap-y-10 md:grid-cols-3 lg:gap-x-[42px] xl:grid-cols-4">
+          <div className="mt-6 grid grid-cols-2 gap-x-3 gap-y-8 sm:gap-x-5 md:grid-cols-3 lg:gap-x-6 lg:gap-y-12 xl:grid-cols-4">
             {featuredRest.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
@@ -185,7 +187,7 @@ export default async function HomePage() {
       )}
 
       {/* Service strip */}
-      <section className="site-x pt-24 lg:pt-32">
+      <section className="site-x pt-14 lg:pt-20">
         <div className="grid border border-line sm:grid-cols-3">
           {[
             {

@@ -17,9 +17,9 @@ export function SortSelect() {
   const current = params.get('sort') ?? 'featured';
 
   return (
-    <label className="flex items-center gap-4">
-      <SlidersHorizontal className="h-5 w-5 text-muted" strokeWidth={1.5} />
-      <span className="hidden font-display text-[13px] uppercase tracking-wide2 text-muted sm:inline">Sort:</span>
+    <label className="flex items-center gap-2.5">
+      <SlidersHorizontal className="h-4 w-4 text-muted" strokeWidth={1.5} />
+      <span className="text-[13px] text-muted">Sort</span>
       <span className="relative">
         <select
           value={current}
@@ -30,7 +30,7 @@ export function SortSelect() {
             const qs = next.toString();
             router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
           }}
-          className="h-11 w-[220px] appearance-none border border-line-strong bg-surface-2 pl-5 pr-12 font-display text-xs font-medium uppercase tracking-label text-fg focus:outline-none sm:h-12 sm:w-[300px] sm:pl-7"
+          className="h-9 appearance-none border border-line bg-transparent pl-3 pr-9 text-[13px] text-fg focus:border-fg focus:outline-none"
           aria-label="Sort products"
         >
           {OPTIONS.map((o) => (
@@ -39,7 +39,7 @@ export function SortSelect() {
             </option>
           ))}
         </select>
-        <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2" strokeWidth={1.5} />
+        <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2" strokeWidth={1.5} />
       </span>
     </label>
   );
