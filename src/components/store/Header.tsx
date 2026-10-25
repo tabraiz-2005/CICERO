@@ -77,6 +77,13 @@ function DeptMenu({ categories }: { categories: NavCategory[] }) {
           </Link>
         </div>
       ))}
+      <Link
+        href="/sale"
+        onMouseEnter={() => setOpen(null)}
+        className="whitespace-nowrap py-9 font-display text-[13px] font-medium uppercase tracking-label text-brand transition-opacity hover:opacity-80"
+      >
+        999 Sale
+      </Link>
 
       {open && (
         <div
@@ -157,6 +164,13 @@ function MobileMenu({
       </div>
 
       <nav className="site-x flex-1 overflow-y-auto pb-10 pt-6">
+        <Link
+          href="/sale"
+          onClick={onClose}
+          className="mb-6 flex items-center justify-between border border-brand/40 px-4 py-3 font-display text-[15px] uppercase tracking-[0.12em] text-brand"
+        >
+          999 Sale <span className="text-[12px] normal-case tracking-normal text-muted">Everything Rs 999</span>
+        </Link>
         <p className="font-display text-[12px] font-semibold uppercase tracking-[0.18em] text-fg">Shop by categories</p>
         <ul className="mt-4 space-y-1">
           <li>

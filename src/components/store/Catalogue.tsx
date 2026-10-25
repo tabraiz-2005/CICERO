@@ -15,6 +15,7 @@ export interface CatalogueParams {
   sort?: string;
   collection?: string;
   q?: string;
+  sale?: string;
 }
 
 const basePath = (g: G) => (g === 'men' ? '/men' : g === 'women' ? '/women' : '/shop');
@@ -44,20 +45,25 @@ export async function Catalogue({
   const gender: G = fixedGender ?? (params.gender === 'men' || params.gender === 'women' ? params.gender : 'all');
   const sort = SORTS.includes(params.sort as SortKey) ? (params.sort as SortKey) : 'featured';
   const allCategories = await getCategories();
-  const categories = allCategories.filter((c) => gender === 'all' || c.gender === 'all' || c.gender === gender);
+  const inDept = allCategories.filter((c) => gender === 'all' || c.gender === 'all' || c.gender === gender);
   const category = allCategories.find((c) => c.slug === params.category);
 
+  const salePrice = params.sale && /^\d+$/.test(params.sale) ? Number(params.sale) : undefined;
   const [products, inGender] = await Promise.all([
-    getProducts({ gender, category: category?.slug, collection: params.collection, search: params.q, sort }),
-    getProducts({ gender, collection: params.collection, search: params.q }),
+    getProducts({ gender, category: category?.slug, collection: params.collection, search: params.q, price: salePrice, sort }),
+    getProducts({ gender, collection: params.collection, search: params.q, price: salePrice }),
   ]);
   const countFor = (slug: string) => inGender.filter((p) => p.category === slug).length;
+  // In a sale, only list categories that actually have sale pieces.
+  const categories = salePrice ? inDept.filter((c) => countFor(c.slug) > 0) : inDept;
 
   const heading =
     title ??
-    (category ? category.name : gender === 'men' ? "Men’s Collection" : gender === 'women' ? "Women’s Collection" : 'All Pieces');
+    (salePrice
+      ? `${salePrice} Sale${gender !== 'all' ? ` · ${gender === 'men' ? 'Men' : 'Women'}` : ''}${category ? ` · ${category.name}` : ''}`
+      : category ? category.name : gender === 'men' ? "Men’s Collection" : gender === 'women' ? "Women’s Collection" : 'All Pieces');
   const filtered = gender !== 'all' || Boolean(category) || sort !== 'featured';
-  const extra = { collection: params.collection, q: params.q };
+  const extra = { collection: params.collection, q: params.q, sale: params.sale };
 
   const deptLink = (g: G, label: string) => (
     <Link

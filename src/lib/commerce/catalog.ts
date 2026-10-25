@@ -161,6 +161,8 @@ export interface ProductFilter {
   sort?: SortKey;
   newOnly?: boolean;
   featuredOnly?: boolean;
+  /** Only products at exactly this price (rupees), e.g. the 999 sale. */
+  price?: number;
   limit?: number;
 }
 
@@ -236,6 +238,7 @@ export async function getProducts(filter: ProductFilter = {}): Promise<Product[]
   if (filter.collection) products = products.filter((p) => p.collection === filter.collection);
   if (filter.newOnly) products = products.filter((p) => p.isNewArrival);
   if (filter.featuredOnly) products = products.filter((p) => p.isFeatured);
+  if (filter.price != null) products = products.filter((p) => Math.round(p.price) === filter.price);
   if (filter.search) {
     const terms = filter.search.toLowerCase().split(/\s+/).filter(Boolean);
     products = products.filter((p) => {
