@@ -22,7 +22,7 @@ export default async function HomePage() {
   return (
     <>
       {/* Campaign hero */}
-      <section className="relative h-[calc(100svh-110px)] min-h-[560px] overflow-hidden border-b border-line bg-black">
+      <section className="relative h-[calc(100svh-154px)] lg:h-[calc(100svh-110px)] min-h-[560px] overflow-hidden border-b border-line bg-black">
         {settings.hero_image_url ? (
           <Img
             src={settings.hero_image_url}

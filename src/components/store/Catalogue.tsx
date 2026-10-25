@@ -151,7 +151,7 @@ export async function Catalogue({
 
         <div>
           {/* Mobile filters */}
-          <div className="sticky top-[72px] z-20 -mx-4 border-b border-line bg-bg/95 px-4 backdrop-blur sm:-mx-8 sm:px-8 lg:hidden">
+          <div className="sticky top-[116px] z-20 -mx-4 border-b border-line bg-bg/95 px-4 backdrop-blur sm:-mx-8 sm:px-8 lg:hidden">
             <div className="flex gap-2 overflow-x-auto py-3 no-scrollbar">
               {(['men', 'women'] as G[]).map((g) => (
                 <Link

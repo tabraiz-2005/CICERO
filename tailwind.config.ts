@@ -3,6 +3,8 @@ import type { Config } from 'tailwindcss';
 const v = (name: string) => `rgb(var(--${name}) / <alpha-value>)`;
 
 const config: Config = {
+  // Hover effects only on devices that can hover, so phones open a product on the first tap.
+  future: { hoverOnlyWhenSupported: true },
   darkMode: ['class', '[data-theme="dark"]'],
   content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
   theme: {

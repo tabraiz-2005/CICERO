@@ -80,7 +80,12 @@ function DeptMenu({ categories }: { categories: NavCategory[] }) {
       <Link
         href="/sale"
         onMouseEnter={() => setOpen(null)}
-        className="whitespace-nowrap py-9 font-display text-[13px] font-medium uppercase tracking-label text-brand transition-opacity hover:opacity-80"
+        className={cn(
+          'whitespace-nowrap border px-3.5 py-2 font-display text-[12px] font-semibold uppercase tracking-[0.16em] transition-colors',
+          pathname.startsWith('/sale')
+            ? 'border-brand bg-brand text-brand-ink'
+            : 'border-brand text-brand hover:bg-brand hover:text-brand-ink'
+        )}
       >
         999 Sale
       </Link>
@@ -288,6 +293,31 @@ export function Header({ storeName, categories }: { storeName: string; categorie
             </button>
           </div>
         </div>
+
+        {/* Mobile quick links: Men, Women and the sale, always one tap away */}
+        <nav className="site-x flex h-11 items-center gap-6 border-t border-line lg:hidden" aria-label="Departments">
+          {DEPTS.map((d) => (
+            <Link
+              key={d.key}
+              href={`/${d.key}`}
+              className={cn(
+                'font-display text-[12px] font-medium uppercase tracking-[0.16em]',
+                pathname.startsWith(`/${d.key}`) ? 'text-fg underline underline-offset-[6px]' : 'text-fg/75'
+              )}
+            >
+              {d.label}
+            </Link>
+          ))}
+          <Link
+            href="/sale"
+            className={cn(
+              'ml-auto inline-flex h-8 items-center border px-3 font-display text-[11px] font-semibold uppercase tracking-[0.16em]',
+              pathname.startsWith('/sale') ? 'border-brand bg-brand text-brand-ink' : 'border-brand text-brand'
+            )}
+          >
+            999 Sale
+          </Link>
+        </nav>
       </header>
 
       {menuOpen && <MobileMenu storeName={storeName} categories={categories} wishCount={count} onClose={() => setMenuOpen(false)} />}
