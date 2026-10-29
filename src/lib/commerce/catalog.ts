@@ -189,26 +189,72 @@ const showcaseRank = (slug: string) => {
   return i === -1 ? SHOWCASE.length : i;
 };
 
-/**
- * Presentable default order: products are grouped by category (featured first,
- * then newest), and the groups are dealt out in turn — coat, jacket, sweater,
- * cardigan, hoodie… — so no single category floods the top of the page.
- */
-export function arrange(products: Product[]): Product[] {
-  const groups = new Map<string, Product[]>();
-  for (const p of products) {
-    const g = groups.get(p.category) ?? [];
-    g.push(p);
-    groups.set(p.category, g);
+/** Best foot forward inside a category: featured, then pieces with more photos/colours, then premium. */
+const appeal = (p: Product) =>
+  (p.isFeatured ? 1000 : 0) + Math.min(p.images.length, 4) * 20 + Math.min(p.availableColors.length, 3) * 15 + Math.min(p.price / 1000, 15);
+
+/** "Faded Wash Fleece Trousers – Purple" and "– Red" are the same style; keep them apart. */
+const styleName = (p: Product) => p.title.split(/\s[–-]\s/)[0].trim().toLowerCase();
+
+function bestFirstVaried(list: Product[]): Product[] {
+  const sorted = [...list].sort((a, b) => appeal(b) - appeal(a));
+  const styles = new Map<string, Product[]>();
+  for (const p of sorted) {
+    const k = styleName(p);
+    styles.set(k, [...(styles.get(k) ?? []), p]);
   }
-  const ordered = Array.from(groups.entries())
-    .sort(([a], [b]) => showcaseRank(a) - showcaseRank(b))
-    .map(([, list]) => list.sort((a, b) => Number(Boolean(b.isFeatured)) - Number(Boolean(a.isFeatured))));
+  const queues = Array.from(styles.values());
   const out: Product[] = [];
-  for (let round = 0; out.length < products.length; round++) {
-    for (const list of ordered) if (list[round]) out.push(list[round]);
+  for (let round = 0; out.length < sorted.length; round++) for (const q of queues) if (q[round]) out.push(q[round]);
+  return out;
+}
+
+/**
+ * Mix categories: the first row shows one of each lead category (coat, jacket,
+ * sweater…), then every category is spread evenly through the rest of the list
+ * so a big category (e.g. trousers) never clumps, and the same category is not
+ * placed twice in a row when another one is nearly as "due".
+ */
+function spread(products: Product[]): Product[] {
+  const groups = new Map<string, Product[]>();
+  for (const p of products) groups.set(p.category, [...(groups.get(p.category) ?? []), p]);
+  const cats = Array.from(groups.entries())
+    .sort(([a], [b]) => showcaseRank(a) - showcaseRank(b))
+    .map(([c, list]) => ({ c, q: bestFirstVaried(list), used: 0, rem: 0, placed: 0 }));
+
+  const out: Product[] = [];
+  for (const x of cats.slice(0, 4)) out.push(x.q[x.used++]);
+
+  for (const x of cats) x.rem = x.q.length - x.used;
+  const total = products.length - out.length;
+  let prev = out.length ? out[out.length - 1].category : null;
+  for (let k = 1; k <= total; k++) {
+    const due = (x: (typeof cats)[number]) => (x.rem * k) / total - x.placed;
+    const avail = cats
+      .filter((x) => x.used < x.q.length)
+      .sort((a, b) => due(b) - due(a) || showcaseRank(a.c) - showcaseRank(b.c));
+    const pick = avail[0].c === prev && avail[1] && due(avail[1]) > due(avail[0]) - 1 ? avail[1] : avail[0];
+    out.push(pick.q[pick.used++]);
+    pick.placed++;
+    prev = pick.c;
   }
   return out;
+}
+
+/**
+ * Presentable default order: featured pieces lead, then everything else with
+ * categories mixed evenly (coats and jackets first in each "round"), the most
+ * appealing pieces of each category first, colour versions kept apart, and
+ * sold-out pieces at the very end.
+ */
+export function arrange(products: Product[]): Product[] {
+  const inStock = products.filter((p) => p.totalStock > 0);
+  const soldOut = products.filter((p) => p.totalStock <= 0);
+  return [
+    ...spread(inStock.filter((p) => p.isFeatured)),
+    ...spread(inStock.filter((p) => !p.isFeatured)),
+    ...spread(soldOut),
+  ];
 }
 
 /** Newest pieces, at most one per category, so "New arrivals" shows the range. */
