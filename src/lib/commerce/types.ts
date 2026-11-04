@@ -135,6 +135,8 @@ export interface StoreSettings {
   hero_title: string;
   hero_subtitle: string;
   hero_image_url: string | null;
+  /** Optional portrait hero for phones; falls back to hero_image_url. */
+  hero_image_mobile_url: string | null;
   hero_cta_label: string;
   hero_cta_href: string;
   standard_shipping_amount: number; // cents
@@ -160,6 +162,7 @@ export const DEFAULT_SETTINGS: StoreSettings = {
   hero_title: 'The Winter Edit',
   hero_subtitle: 'Wool coats, jackets and knitwear cut for the cold months.',
   hero_image_url: null,
+  hero_image_mobile_url: null,
   hero_cta_label: 'Shop the collection',
   hero_cta_href: '/shop',
   standard_shipping_amount: 25000,

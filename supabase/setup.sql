@@ -1279,19 +1279,28 @@ notify pgrst, 'reload schema';
 -- Shorts are Men only; everything else shows for both.
 -- ---------------------------------------------------------------------------
 insert into public.categories (slug, name, gender, description, sort_order) values
-  ('sweatshirts', 'Sweatshirts', 'all', 'Crewneck sweatshirts and hoodies in soft brushed fleece.', 1),
-  ('sweaters',    'Sweaters',    'all', 'Knit sweaters, polos and roll-necks for the cold months.', 2),
-  ('cardigans',   'Cardigans',   'all', 'Zip-up and button-through knitwear for layering.', 3),
-  ('tracksuits',  'Tracksuits',  'all', 'Fleece and knit tracksuit sets, made for comfort through the winter.', 4),
-  ('trousers',    'Trousers',    'all', 'Tailored, chino and relaxed trousers.', 5),
-  ('denim-jeans', 'Denim Jeans', 'all', 'Straight, slim and relaxed denim.', 6),
-  ('shorts',      'Shorts',      'men', 'Casual and knit shorts.', 7),
-  ('jackets',     'Jackets',     'all', 'Puffers, bombers, leather and quilted jackets.', 8),
-  ('wool-coats',  'Wool Coats',  'all', 'Long coats, overcoats and wrap coats.', 9),
-  ('accessories', 'Accessories', 'all', 'Scarves, caps, gloves and finishing touches.', 10)
+  ('hoodies',     'Hoodies',     'all', 'Pullover and zip hoodies in soft, heavy fleece.', 1),
+  ('sweatshirts', 'Sweatshirts', 'all', 'Crewneck sweatshirts in soft brushed fleece.', 2),
+  ('sweaters',    'Sweaters',    'all', 'Knit sweaters, polos and roll-necks for the cold months.', 3),
+  ('cardigans',   'Cardigans',   'all', 'Zip-up and button-through knitwear for layering.', 4),
+  ('tracksuits',  'Tracksuits',  'all', 'Fleece and knit tracksuit sets, made for comfort through the winter.', 5),
+  ('trousers',    'Trousers',    'all', 'Joggers, chinos, tailored and relaxed trousers.', 6),
+  ('denim-jeans', 'Denim Jeans', 'all', 'Straight, slim and relaxed denim.', 7),
+  ('shorts',      'Shorts',      'men', 'Casual and knit shorts.', 8),
+  ('jackets',     'Jackets',     'all', 'Puffers, bombers, leather and quilted jackets.', 9),
+  ('wool-coats',  'Wool Coats',  'all', 'Long coats, overcoats and wrap coats.', 10),
+  ('accessories', 'Accessories', 'all', 'Scarves, caps, gloves and finishing touches.', 11)
 on conflict (slug) do update
   set sort_order = excluded.sort_order,
       gender     = excluded.gender,
       is_active  = true;
+
+-- ======== 09_hero_mobile.sql ========
+-- ---------------------------------------------------------------------------
+-- Optional portrait hero photo for phones (falls back to the main hero image).
+-- ---------------------------------------------------------------------------
+alter table public.store_settings add column if not exists hero_image_mobile_url text;
+
+notify pgrst, 'reload schema';
 
 commit;

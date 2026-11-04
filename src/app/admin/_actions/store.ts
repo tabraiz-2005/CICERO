@@ -162,6 +162,7 @@ export async function saveSettings(s: Partial<StoreSettings>): Promise<ActionRes
       hero_title: text(s.hero_title) || 'CICERO',
       hero_subtitle: text(s.hero_subtitle),
       hero_image_url: text(s.hero_image_url) || null,
+      hero_image_mobile_url: text(s.hero_image_mobile_url) || null,
       hero_cta_label: text(s.hero_cta_label) || 'Shop the collection',
       hero_cta_href: text(s.hero_cta_href).startsWith('/') ? text(s.hero_cta_href) : '/shop',
       standard_shipping_amount: cents(s.standard_shipping_amount),

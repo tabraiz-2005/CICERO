@@ -77,7 +77,7 @@ export function SettingsForm({ initial }: { initial: StoreSettings }) {
       </Section>
 
       <Section title="Homepage hero" hint="The big campaign block at the top of the homepage. Portrait or landscape photos both work; the image sits on the right.">
-        <div className="grid gap-4 lg:grid-cols-[1fr_280px]">
+        <div className="grid gap-4 lg:grid-cols-[1fr_220px_180px]">
           <div className="space-y-4">
             <Field label="Small label"><input {...t('hero_eyebrow')} className="field" /></Field>
             <Field label="Headline"><input {...t('hero_title')} className="field" /></Field>
@@ -87,8 +87,11 @@ export function SettingsForm({ initial }: { initial: StoreSettings }) {
               <Field label="Button link" hint="e.g. /shop, /women, /collections/winter-edit"><input {...t('hero_cta_href')} className="field" /></Field>
             </div>
           </div>
-          <Field label="Hero image">
-            <SingleImage value={s.hero_image_url} onChange={(u) => set('hero_image_url', u)} folder="site" aspect="aspect-[4/5]" />
+          <Field label="Hero image · computer" hint="Wide (landscape) photo, e.g. 2400 × 1350.">
+            <SingleImage value={s.hero_image_url} onChange={(u) => set('hero_image_url', u)} folder="site" aspect="aspect-[16/10]" />
+          </Field>
+          <Field label="Hero image · phone" hint="Tall (portrait) photo, e.g. 1080 × 1620. Empty = use the computer one.">
+            <SingleImage value={s.hero_image_mobile_url ?? null} onChange={(u) => set('hero_image_mobile_url', u)} folder="site" aspect="aspect-[9/14]" />
           </Field>
         </div>
       </Section>

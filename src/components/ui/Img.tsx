@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 
 const OPTIMIZED = [/\.supabase\.(co|in)$/, /^images\.unsplash\.com$/, /^plus\.unsplash\.com$/];
 
-function canOptimize(src: string) {
+export function canOptimize(src: string) {
   try {
     const host = new URL(src).hostname;
     return OPTIMIZED.some((r) => r.test(host));

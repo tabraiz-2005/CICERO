@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { HeroImage } from '@/components/store/HeroImage';
 import { ArrowUpRight, ShieldCheck, Truck, RotateCcw } from 'lucide-react';
 import { arrange, getCollections, getProducts, getSettings, newestMix } from '@/lib/commerce/catalog';
 import { ProductCard } from '@/components/store/ProductCard';
@@ -24,13 +25,7 @@ export default async function HomePage() {
       {/* Campaign hero */}
       <section className="relative h-[calc(100svh-var(--header-h)-36px)] min-h-[560px] overflow-hidden border-b border-line bg-black">
         {settings.hero_image_url ? (
-          <Img
-            src={settings.hero_image_url}
-            alt={settings.hero_title}
-            sizes="100vw"
-            priority
-            className="object-cover object-[72%_center] lg:object-center"
-          />
+          <HeroImage desktop={settings.hero_image_url} mobile={settings.hero_image_mobile_url} alt={settings.hero_title} />
         ) : (
           <GarmentArt category="coat" className="bg-surface" />
         )}
