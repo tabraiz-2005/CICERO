@@ -266,9 +266,8 @@ function MobileMenu({
             </Link>
           ))}
         </div>
-        <div className="mt-8 flex items-center justify-between border-t border-line pt-6">
+        <div className="mt-8 border-t border-line pt-6">
           <span className="text-[12px] uppercase tracking-[0.18em] text-muted">Pakistan · PKR</span>
-          <ThemeToggle />
         </div>
       </nav>
     </div>
@@ -336,7 +335,8 @@ export function Header({
           </Link>
 
           {/* Right */}
-          <div className="flex items-center justify-end gap-1 sm:gap-2 lg:gap-6">
+          <div className="flex items-center justify-end gap-0.5 sm:gap-2 lg:gap-5">
+            <ThemeToggle className="h-8 w-8 border-transparent lg:h-9 lg:w-9 lg:border-line" />
             <button className="p-2 lg:hidden" aria-label="Search" onClick={() => setSearchOpen(true)}>
               <Search className="h-[21px] w-[21px]" strokeWidth={1.25} />
             </button>

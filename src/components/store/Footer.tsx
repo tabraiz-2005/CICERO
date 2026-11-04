@@ -4,7 +4,6 @@ import type { NavCategory } from './Header';
 import type { StoreSettings } from '@/lib/commerce/types';
 import { formatPkPhone, whatsappLink } from '@/lib/phone';
 import { mapsLink } from '@/lib/commerce/local';
-import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { Logo } from './Logo';
 
 type Col = { title: string; links: { href: string; label: string; external?: boolean }[] };
@@ -203,10 +202,7 @@ export function Footer({ settings }: { settings: StoreSettings; categories?: Nav
           <span>
             © {new Date().getFullYear()} {settings.store_name} · Satellite Town, Gujranwala, Pakistan
           </span>
-          <span className="flex items-center gap-5">
-            <span className="uppercase tracking-[0.18em]">Pakistan · PKR</span>
-            <ThemeToggle />
-          </span>
+          <span className="uppercase tracking-[0.18em]">Pakistan · PKR</span>
         </div>
       </div>
     </footer>
