@@ -82,6 +82,13 @@ export function ProductView({
     railRef.current?.scrollTo({ left: 0, behavior: 'smooth' });
   };
 
+  // Arriving from a colour swatch on a product card (?color=Teal): open on that colour.
+  useEffect(() => {
+    const wanted = new URLSearchParams(window.location.search).get('color');
+    if (wanted && wanted !== color && product.variants.some((v) => v.color === wanted)) chooseColor(wanted);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const addToBag = () => {
     if (!variant || !variant.inStock) return;
     addItem(product, variant, 1); // opens the bag drawer
@@ -147,7 +154,7 @@ export function ProductView({
       </div>
 
       {/* Buy panel */}
-      <div className="md:sticky md:top-28 md:self-start">
+      <div className="md:sticky md:top-[calc(var(--header-h)+24px)] md:self-start">
         <nav className="flex flex-wrap items-center gap-2 text-[12px] text-muted" aria-label="Breadcrumb">
           {dept && (
             <>

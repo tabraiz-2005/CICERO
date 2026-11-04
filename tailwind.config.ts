@@ -41,11 +41,13 @@ const config: Config = {
         fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
         slideIn: { '0%': { transform: 'translateX(100%)' }, '100%': { transform: 'translateX(0)' } },
         rise: { '0%': { opacity: '0', transform: 'translateY(12px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+        breathe: { '0%, 100%': { opacity: '0.45', transform: 'scale(0.985)' }, '50%': { opacity: '1', transform: 'scale(1)' } },
       },
       animation: {
         'fade-in': 'fadeIn .25s ease-out both',
         'slide-in': 'slideIn .35s cubic-bezier(.2,.8,.2,1) both',
         rise: 'rise .5s cubic-bezier(.2,.8,.2,1) both',
+        breathe: 'breathe 1.6s ease-in-out infinite',
       },
     },
   },

@@ -304,7 +304,7 @@ export function CheckoutForm({ shipping }: { shipping: { standard: number; expre
           </fieldset>
         </div>
 
-        <aside className="h-fit border border-line bg-surface p-6 lg:sticky lg:top-32 lg:p-8">
+        <aside className="h-fit border border-line bg-surface p-6 lg:sticky lg:top-[calc(var(--header-h)+24px)] lg:p-8">
           <h2 className="label">Order summary</h2>
           <div className="mt-4 max-h-[340px] divide-y divide-line overflow-y-auto">
             {items.map((i) => (

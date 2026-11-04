@@ -112,7 +112,7 @@ export async function Catalogue({
       <div className="lg:grid lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-12">
         {/* Sidebar (desktop) */}
         <aside className="hidden lg:block">
-          <div className="sticky top-28 pt-8">
+          <div className="sticky top-[calc(var(--header-h)+8px)] pt-8">
             <p className="label text-fg">Department</p>
             <div className="mt-3 border-b border-line pb-5">
               {deptLink('men', 'Men')}
@@ -151,7 +151,7 @@ export async function Catalogue({
 
         <div>
           {/* Mobile filters */}
-          <div className="sticky top-[116px] z-20 -mx-4 border-b border-line bg-bg/95 px-4 backdrop-blur sm:-mx-8 sm:px-8 lg:hidden">
+          <div className="sticky top-[var(--header-h)] z-20 -mx-4 border-b border-line bg-bg/95 px-4 backdrop-blur sm:-mx-8 sm:px-8 lg:hidden">
             <div className="flex gap-2 overflow-x-auto py-3 no-scrollbar">
               {(['men', 'women'] as G[]).map((g) => (
                 <Link

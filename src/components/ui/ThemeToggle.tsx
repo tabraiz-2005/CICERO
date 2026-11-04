@@ -4,17 +4,18 @@ import { Moon, Sun } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 
-export const THEME_KEY = 'cicero_theme';
+/** v2: the store moved to a light, Brunello-style default; older saved choices are ignored. */
+export const THEME_KEY = 'cicero_theme_v2';
 
 /** Inline script for <head>: applies the saved theme before first paint. */
-export const themeScript = `(function(){try{var t=localStorage.getItem('${THEME_KEY}');if(t!=='light'&&t!=='dark')t='dark';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();`;
+export const themeScript = `(function(){try{var t=localStorage.getItem('${THEME_KEY}');if(t!=='light'&&t!=='dark')t='light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();`;
 
 export function ThemeToggle({ className }: { className?: string }) {
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [theme, setTheme] = useState<'dark' | 'light'>('light');
 
   useEffect(() => {
     const t = document.documentElement.getAttribute('data-theme');
-    setTheme(t === 'light' ? 'light' : 'dark');
+    setTheme(t === 'dark' ? 'dark' : 'light');
   }, []);
 
   const toggle = () => {
@@ -34,14 +35,14 @@ export function ThemeToggle({ className }: { className?: string }) {
       onClick={toggle}
       aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
       className={cn(
-        'flex h-12 w-12 items-center justify-center border border-line bg-surface-2 transition-colors hover:border-line-strong',
+        'flex h-9 w-9 items-center justify-center border border-line transition-colors hover:border-line-strong',
         className
       )}
     >
       {theme === 'dark' ? (
-        <Sun className="h-[18px] w-[18px] text-brand" strokeWidth={1.75} />
+        <Sun className="h-4 w-4 text-fg" strokeWidth={1.5} />
       ) : (
-        <Moon className="h-[18px] w-[18px] text-fg" strokeWidth={1.75} />
+        <Moon className="h-4 w-4 text-fg" strokeWidth={1.5} />
       )}
     </button>
   );

@@ -25,6 +25,7 @@ export default async function Contact() {
               heading: 'Visit the store',
               body: (
                 <>
+                  <span id="boutique" className="block scroll-mt-[calc(var(--header-h)+24px)]" />
                   <p>
                     {s.address}
                     {maps && (
