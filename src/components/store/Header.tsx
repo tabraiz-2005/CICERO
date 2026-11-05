@@ -293,7 +293,19 @@ export function Header({
   const { count } = useWishlist();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [hovering, setHovering] = useState(false);
   const pathname = usePathname();
+
+  // On the homepage the header floats transparently over the hero photo,
+  // and turns solid ivory as soon as the shopper scrolls or opens a menu.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+  const overHero = pathname === '/' && !scrolled && !hovering;
 
   useEffect(() => {
     setMenuOpen(false);
@@ -311,7 +323,14 @@ export function Header({
     <>
       <UtilityBar announcement={announcement} />
 
-      <header className="sticky top-0 z-40 border-b border-line bg-bg/95 backdrop-blur-md">
+      <header
+        onMouseEnter={() => setHovering(true)}
+        onMouseLeave={() => setHovering(false)}
+        className={cn(
+          'sticky top-0 z-40 border-b transition-[background-color,border-color,color] duration-300',
+          overHero ? 'on-hero border-transparent bg-transparent' : 'border-line bg-bg/95 backdrop-blur-md'
+        )}
+      >
         <div className="site-x grid h-16 grid-cols-[1fr_auto_1fr] items-center lg:h-20">
           {/* Left */}
           <div className="flex items-center">

@@ -68,6 +68,19 @@
   }
 }
 
+/* Header floating over the homepage photo: white ink, soft white hairlines. */
+.on-hero {
+  --fg: 255 255 255;
+  --muted: 235 235 235;
+  --subtle: 220 220 220;
+  --bg: 29 29 27;
+  color: rgb(var(--fg));
+}
+.on-hero .border-line,
+.on-hero.border-line {
+  border-color: rgb(255 255 255 / 0.22);
+}
+
 @layer components {
   /* Height of the sticky header, for anything that sticks just below it. */
   :root {

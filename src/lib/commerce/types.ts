@@ -73,6 +73,8 @@ export interface Product {
   seoTitle: string;
   seoDescription: string;
   isNewArrival?: boolean;
+  /** When the product was added (ISO); used to lead with the latest pieces. */
+  addedAt?: string;
   isFeatured?: boolean;
   isBestseller?: boolean;
   relatedProductSlugs?: string[];

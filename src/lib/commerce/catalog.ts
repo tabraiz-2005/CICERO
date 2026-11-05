@@ -139,6 +139,7 @@ export function mapProduct(row: Row): Product {
     seoTitle: row.seo_title || row.title,
     seoDescription: row.seo_description || row.description,
     isNewArrival: row.is_new_arrival,
+    addedAt: row.created_at ?? row.published_at ?? undefined,
     isFeatured: row.is_featured,
     isBestseller: row.is_bestseller,
     relatedProductSlugs: row.related_product_slugs ?? [],
@@ -247,12 +248,33 @@ function spread(products: Product[]): Product[] {
  * appealing pieces of each category first, colour versions kept apart, and
  * sold-out pieces at the very end.
  */
+const FRESH_COUNT = 16;
+const FRESH_DAYS = 10;
+
+/** The latest pieces: the newest uploads (up to 16, within 10 days of the most recent one). */
+function freshIds(products: Product[]): Set<string> {
+  const dated = products
+    .filter((p) => p.addedAt)
+    .sort((a, b) => Date.parse(b.addedAt as string) - Date.parse(a.addedAt as string));
+  if (!dated.length) return new Set();
+  const newest = Date.parse(dated[0].addedAt as string);
+  return new Set(
+    dated
+      .filter((p) => newest - Date.parse(p.addedAt as string) <= FRESH_DAYS * 86_400_000)
+      .slice(0, FRESH_COUNT)
+      .map((p) => p.id)
+  );
+}
+
 export function arrange(products: Product[]): Product[] {
   const inStock = products.filter((p) => p.totalStock > 0);
   const soldOut = products.filter((p) => p.totalStock <= 0);
+  const fresh = freshIds(inStock);
+  const lead = (p: Product) => p.isFeatured || fresh.has(p.id);
   return [
-    ...spread(inStock.filter((p) => p.isFeatured)),
-    ...spread(inStock.filter((p) => !p.isFeatured)),
+    // Featured + the latest uploads lead, mixed by category.
+    ...spread(inStock.filter(lead)),
+    ...spread(inStock.filter((p) => !lead(p))),
     ...spread(soldOut),
   ];
 }
