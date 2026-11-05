@@ -75,7 +75,7 @@
   }
   @media (min-width: 1024px) {
     :root {
-      --header-h: 164px;
+      --header-h: 120px;
     }
   }
   .site-x {

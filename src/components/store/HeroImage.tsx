@@ -43,7 +43,7 @@ export function HeroSection({
         // Before the photo loads: a sensible shape. After: the photo's own shape.
         !ratio && (mobile ? 'aspect-[2/3] lg:aspect-[16/9]' : 'aspect-[3/4] lg:aspect-[16/9]'),
         // Never taller than the screen, never too short to hold the headline.
-        'max-h-[calc(100svh-var(--header-h)-36px)] min-h-[600px] lg:max-h-[calc(100svh-var(--header-h)-82px)] lg:min-h-[540px]'
+        'max-h-[calc(100svh-var(--header-h)-36px)] min-h-[600px] lg:max-h-[calc(100svh-var(--header-h)-64px)] lg:min-h-[540px]'
       )}
     >
       <picture>

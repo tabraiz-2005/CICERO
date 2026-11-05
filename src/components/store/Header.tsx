@@ -29,8 +29,8 @@ const forDept = (cats: NavCategory[], d: Dept) => cats.filter((c) => !c.gender |
 /** Small caps nav link with a hairline underline that draws in on hover (Brunello Cucinelli style). */
 const navLink = (active: boolean) =>
   cn(
-    'relative whitespace-nowrap py-4 font-display text-[12px] font-medium uppercase tracking-[0.2em] transition-colors',
-    'after:absolute after:inset-x-0 after:bottom-3 after:h-px after:origin-left after:bg-fg after:transition-transform after:duration-300',
+    'relative whitespace-nowrap py-3 font-display text-[12px] font-medium uppercase tracking-[0.2em] transition-colors',
+    'after:absolute after:inset-x-0 after:bottom-2 after:h-px after:origin-left after:bg-fg after:transition-transform after:duration-300',
     active ? 'text-fg after:scale-x-100' : 'text-fg/70 after:scale-x-0 hover:text-fg hover:after:scale-x-100'
   );
 
@@ -53,13 +53,13 @@ function UtilityBar({ announcement }: { announcement?: string | null }) {
     <>
       {announcement && (
         <div className="border-b border-line bg-surface">
-          <p className="site-x truncate py-2.5 text-center font-display text-[10.5px] uppercase tracking-[0.22em] text-fg/75 sm:text-[11px]">
+          <p className="site-x truncate py-2 text-center font-display text-[10px] uppercase tracking-[0.22em] text-fg/75 sm:text-[11px]">
             {announcement}
           </p>
         </div>
       )}
       <div className="hidden border-b border-line lg:block">
-        <div className="site-x flex h-11 items-center justify-between font-display text-[10.5px] uppercase tracking-[0.2em] text-fg/60">
+        <div className="site-x flex h-8 items-center justify-between font-display text-[10px] uppercase tracking-[0.2em] text-fg/60">
           <nav className="flex items-center gap-10" aria-label="Services">
             <span className="text-fg/75">Pakistan · PKR</span>
             <Link href="/contact" className={util}>Contact us</Link>
@@ -97,7 +97,7 @@ function DesktopNav({ categories, heroImage }: { categories: NavCategory[]; hero
   useEffect(() => setOpen(null), [pathname, params]);
 
   return (
-    <div className="flex h-[60px] items-center justify-center gap-12" onMouseLeave={hide}>
+    <div className="flex h-[46px] items-center justify-center gap-12" onMouseLeave={hide}>
       <Link href="/" onMouseEnter={() => setOpen(null)} className={navLink(pathname === '/')}>
         Home
       </Link>
@@ -325,7 +325,7 @@ export function Header({
       <UtilityBar announcement={announcement} />
 
       <header className="sticky top-0 z-40 border-b border-line bg-bg">
-        <div className="site-x grid h-16 grid-cols-[1fr_auto_1fr] items-center lg:h-[104px]">
+        <div className="site-x grid h-16 grid-cols-[1fr_auto_1fr] items-center lg:h-[72px]">
           {/* Left */}
           <div className="flex items-center">
             <button className="-ml-2 p-2 lg:hidden" aria-label="Open menu" onClick={() => setMenuOpen(true)}>
@@ -344,7 +344,7 @@ export function Header({
 
           {/* Logo */}
           <Link href="/" className="block text-fg" aria-label={`${storeName} home`}>
-            <Logo title={storeName} className="w-[112px] sm:w-[124px] lg:w-[164px]" />
+            <Logo title={storeName} className="w-[112px] sm:w-[124px] lg:w-[136px]" />
           </Link>
 
           {/* Right */}
@@ -369,7 +369,7 @@ export function Header({
 
         {/* Desktop: centred navigation row */}
         <div className="hidden border-t border-line lg:block">
-          <Suspense fallback={<div className="h-[60px]" />}>
+          <Suspense fallback={<div className="h-[46px]" />}>
             <DesktopNav categories={categories} heroImage={heroImage} />
           </Suspense>
         </div>
