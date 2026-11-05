@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import '@fontsource-variable/jost';
 import '@fontsource-variable/inter';
+import '@fontsource-variable/cormorant-garamond';
 import './globals.css';
 import { Analytics } from '@vercel/analytics/next';
 import { themeScript } from '@/components/ui/ThemeToggle';

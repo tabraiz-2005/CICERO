@@ -99,7 +99,7 @@ export async function Catalogue({
           )}
         </nav>
         <div className="mt-3 flex flex-wrap items-end justify-between gap-3">
-          <h1 className="font-display text-[26px] font-normal uppercase tracking-[0.06em] sm:text-[32px] lg:text-[38px]">{heading}</h1>
+          <h1 className="font-serif text-[34px] font-normal leading-tight sm:text-[42px] lg:text-[50px]">{heading}</h1>
           <p className="text-[13px] text-muted">
             {products.length} {products.length === 1 ? 'piece' : 'pieces'}
           </p>
@@ -151,7 +151,7 @@ export async function Catalogue({
 
         <div>
           {/* Mobile filters */}
-          <div className="sticky top-[var(--header-h)] z-20 -mx-4 border-b border-line bg-bg/95 px-4 backdrop-blur sm:-mx-8 sm:px-8 lg:hidden">
+          <div className="sticky top-[var(--header-h)] z-20 -mx-4 border-b border-line bg-bg px-4 sm:-mx-8 sm:px-8 lg:hidden">
             <div className="flex gap-2 overflow-x-auto py-3 no-scrollbar">
               {(['men', 'women'] as G[]).map((g) => (
                 <Link

@@ -28,6 +28,7 @@ const config: Config = {
       fontFamily: {
         display: ['"Jost Variable"', 'Jost', 'Futura', 'Century Gothic', 'system-ui', 'sans-serif'],
         sans: ['"Inter Variable"', 'Inter', 'system-ui', 'sans-serif'],
+        serif: ['"Cormorant Garamond Variable"', '"Cormorant Garamond"', 'Garamond', 'Georgia', 'serif'],
       },
       letterSpacing: {
         label: '0.22em',

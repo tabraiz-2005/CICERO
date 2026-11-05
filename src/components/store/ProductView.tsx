@@ -166,7 +166,7 @@ export function ProductView({
         </nav>
 
         <div className="mt-4 flex items-start justify-between gap-3">
-          <h1 className="font-display text-[clamp(19px,1.6vw,23px)] font-normal leading-snug tracking-[0.01em]">{product.title}</h1>
+          <h1 className="font-serif text-[clamp(26px,2.2vw,32px)] font-normal leading-tight">{product.title}</h1>
           <div className="flex shrink-0 items-center gap-1">
             <button type="button" onClick={share} aria-label="Share" className="flex h-9 w-9 items-center justify-center text-fg/80 hover:text-fg">
               <Share2 className="h-[18px] w-[18px]" strokeWidth={1.4} />

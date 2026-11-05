@@ -81,6 +81,7 @@ export function SettingsForm({ initial }: { initial: StoreSettings }) {
           <div className="space-y-4">
             <Field label="Small label"><input {...t('hero_eyebrow')} className="field" /></Field>
             <Field label="Headline"><input {...t('hero_title')} className="field" /></Field>
+            <Field label="Sub-headline" hint="One short line under the headline. Leave empty to hide."><textarea rows={2} {...t('hero_subtitle')} className="field h-auto py-3" /></Field>
           </div>
           <Field label="Hero image · computer" hint="Wide (landscape) photo, e.g. 2400 × 1350.">
             <SingleImage value={s.hero_image_url} onChange={(u) => set('hero_image_url', u)} folder="site" aspect="aspect-[16/10]" />

@@ -48,18 +48,31 @@ function Count({ n }: { n: number }) {
 /* -------------------------------------------------------------------------- */
 
 function UtilityBar({ announcement }: { announcement?: string | null }) {
+  const util = 'transition-colors hover:text-fg';
   return (
-    <div className={cn('border-b border-line bg-surface', !announcement && 'hidden lg:block')}>
-      <div className="site-x flex h-9 items-center justify-between gap-6">
-        <p className="min-w-0 flex-1 truncate text-center text-[11px] tracking-[0.06em] text-fg/70 lg:text-left">{announcement}</p>
-        <nav className="hidden shrink-0 items-center gap-7 font-display text-[10.5px] uppercase tracking-[0.18em] text-fg/60 lg:flex" aria-label="Services">
-          <Link href="/contact" className="transition-colors hover:text-fg">Contact us</Link>
-          <Link href="/contact#boutique" className="transition-colors hover:text-fg">Our boutique</Link>
-          <a href="#newsletter" className="transition-colors hover:text-fg">Newsletter</a>
-          <span className="text-fg/45">Pakistan · PKR</span>
-        </nav>
+    <>
+      {announcement && (
+        <div className="border-b border-line bg-surface">
+          <p className="site-x truncate py-2.5 text-center font-display text-[10.5px] uppercase tracking-[0.22em] text-fg/75 sm:text-[11px]">
+            {announcement}
+          </p>
+        </div>
+      )}
+      <div className="hidden border-b border-line lg:block">
+        <div className="site-x flex h-11 items-center justify-between font-display text-[10.5px] uppercase tracking-[0.2em] text-fg/60">
+          <nav className="flex items-center gap-10" aria-label="Services">
+            <span className="text-fg/75">Pakistan · PKR</span>
+            <Link href="/contact" className={util}>Contact us</Link>
+            <Link href="/contact#boutique" className={util}>Boutique</Link>
+            <a href="#newsletter" className={util}>Newsletter</a>
+          </nav>
+          <nav className="flex items-center gap-10" aria-label="Account">
+            <Link href="/size-guide" className={util}>Size guide</Link>
+            <Link href="/wishlist" className={util}>My wishlist</Link>
+          </nav>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -84,7 +97,7 @@ function DesktopNav({ categories, heroImage }: { categories: NavCategory[]; hero
   useEffect(() => setOpen(null), [pathname, params]);
 
   return (
-    <div className="flex h-12 items-center justify-center gap-11" onMouseLeave={hide}>
+    <div className="flex h-[60px] items-center justify-center gap-12" onMouseLeave={hide}>
       <Link href="/" onMouseEnter={() => setOpen(null)} className={navLink(pathname === '/')}>
         Home
       </Link>
@@ -293,19 +306,7 @@ export function Header({
   const { count } = useWishlist();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [hovering, setHovering] = useState(false);
   const pathname = usePathname();
-
-  // On the homepage the header floats transparently over the hero photo,
-  // and turns solid ivory as soon as the shopper scrolls or opens a menu.
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-  const overHero = pathname === '/' && !scrolled && !hovering;
 
   useEffect(() => {
     setMenuOpen(false);
@@ -323,15 +324,8 @@ export function Header({
     <>
       <UtilityBar announcement={announcement} />
 
-      <header
-        onMouseEnter={() => setHovering(true)}
-        onMouseLeave={() => setHovering(false)}
-        className={cn(
-          'sticky top-0 z-40 border-b transition-[background-color,border-color,color] duration-300',
-          overHero ? 'on-hero border-transparent bg-transparent' : 'border-line bg-bg/95 backdrop-blur-md'
-        )}
-      >
-        <div className="site-x grid h-16 grid-cols-[1fr_auto_1fr] items-center lg:h-20">
+      <header className="sticky top-0 z-40 border-b border-line bg-bg">
+        <div className="site-x grid h-16 grid-cols-[1fr_auto_1fr] items-center lg:h-[104px]">
           {/* Left */}
           <div className="flex items-center">
             <button className="-ml-2 p-2 lg:hidden" aria-label="Open menu" onClick={() => setMenuOpen(true)}>
@@ -350,7 +344,7 @@ export function Header({
 
           {/* Logo */}
           <Link href="/" className="block text-fg" aria-label={`${storeName} home`}>
-            <Logo title={storeName} className="w-[112px] sm:w-[124px] lg:w-[148px]" />
+            <Logo title={storeName} className="w-[112px] sm:w-[124px] lg:w-[164px]" />
           </Link>
 
           {/* Right */}
@@ -375,7 +369,7 @@ export function Header({
 
         {/* Desktop: centred navigation row */}
         <div className="hidden border-t border-line lg:block">
-          <Suspense fallback={<div className="h-12" />}>
+          <Suspense fallback={<div className="h-[60px]" />}>
             <DesktopNav categories={categories} heroImage={heroImage} />
           </Suspense>
         </div>

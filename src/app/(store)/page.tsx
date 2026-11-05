@@ -19,58 +19,16 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Campaign hero */}
+      {/* Campaign hero: full-bleed photo, centred serif headline */}
       {settings.hero_image_url ? (
         <HeroSection desktop={settings.hero_image_url} mobile={settings.hero_image_mobile_url} alt={settings.hero_title}>
-        <div className="site-x absolute inset-0 flex flex-col justify-end pb-10 pt-[var(--header-h)] lg:justify-center lg:pb-0">
-          <div className="max-w-[720px] text-white">
-            <p className="font-display text-[11px] uppercase tracking-[0.32em] text-white/75 sm:text-[12px]">{settings.hero_eyebrow}</p>
-            <h1 className="mt-4 font-display text-[40px] font-light uppercase leading-[1.02] tracking-[0.06em] sm:text-[56px] lg:text-[72px]">
-              {settings.hero_title}
-            </h1>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                href="/men"
-                className="inline-flex h-12 min-w-[140px] items-center justify-center border border-white bg-white/0 px-8 font-display text-[12px] font-medium uppercase tracking-[0.24em] text-white transition-colors hover:bg-white hover:text-[#141213] sm:h-14 sm:min-w-[170px]"
-              >
-                Men
-              </Link>
-              <Link
-                href="/women"
-                className="inline-flex h-12 min-w-[140px] items-center justify-center border border-white bg-white/0 px-8 font-display text-[12px] font-medium uppercase tracking-[0.24em] text-white transition-colors hover:bg-white hover:text-[#141213] sm:h-14 sm:min-w-[170px]"
-              >
-                Women
-              </Link>
-            </div>
-          </div>
-        </div>
+          <HeroCopy eyebrow={settings.hero_eyebrow} title={settings.hero_title} subtitle={settings.hero_subtitle} />
         </HeroSection>
       ) : (
-        <section className="relative -mt-[var(--header-h)] h-[100svh] max-h-[900px] min-h-[560px] overflow-hidden bg-black">
+        <section className="relative h-[78svh] min-h-[560px] overflow-hidden bg-black">
           <GarmentArt category="coat" className="bg-surface" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
-        <div className="site-x absolute inset-0 flex flex-col justify-end pb-10 pt-[var(--header-h)] lg:justify-center lg:pb-0">
-          <div className="max-w-[720px] text-white">
-            <p className="font-display text-[11px] uppercase tracking-[0.32em] text-white/75 sm:text-[12px]">{settings.hero_eyebrow}</p>
-            <h1 className="mt-4 font-display text-[40px] font-light uppercase leading-[1.02] tracking-[0.06em] sm:text-[56px] lg:text-[72px]">
-              {settings.hero_title}
-            </h1>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                href="/men"
-                className="inline-flex h-12 min-w-[140px] items-center justify-center border border-white bg-white/0 px-8 font-display text-[12px] font-medium uppercase tracking-[0.24em] text-white transition-colors hover:bg-white hover:text-[#141213] sm:h-14 sm:min-w-[170px]"
-              >
-                Men
-              </Link>
-              <Link
-                href="/women"
-                className="inline-flex h-12 min-w-[140px] items-center justify-center border border-white bg-white/0 px-8 font-display text-[12px] font-medium uppercase tracking-[0.24em] text-white transition-colors hover:bg-white hover:text-[#141213] sm:h-14 sm:min-w-[170px]"
-              >
-                Women
-              </Link>
-            </div>
-          </div>
-        </div>
+          <HeroCopy eyebrow={settings.hero_eyebrow} title={settings.hero_title} subtitle={settings.hero_subtitle} />
         </section>
       )}
 
@@ -80,7 +38,7 @@ export default async function HomePage() {
           <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-4">
             <div>
               <p className="text-[11px] uppercase tracking-[0.24em] text-muted">The collection</p>
-              <h2 className="mt-2 font-display text-[20px] font-normal uppercase tracking-[0.08em] lg:text-[24px]">All pieces</h2>
+              <h2 className="mt-2 font-serif text-[32px] font-normal leading-tight lg:text-[44px]">All pieces</h2>
             </div>
             <Link href="/shop" className="label link-u text-muted">
               Shop all {all.length}
@@ -150,5 +108,31 @@ export default async function HomePage() {
         </div>
       </section>
     </>
+  );
+}
+
+function HeroCopy({ eyebrow, title, subtitle }: { eyebrow: string; title: string; subtitle: string }) {
+  return (
+    <div className="site-x absolute inset-0 flex flex-col items-center justify-end pb-12 text-center text-white sm:pb-16 lg:pb-20">
+      {eyebrow && <p className="font-display text-[10.5px] uppercase tracking-[0.36em] text-white/85 sm:text-[12px]">{eyebrow}</p>}
+      <h1 className="mt-4 max-w-[16ch] font-serif text-[46px] font-normal leading-[1] tracking-[0.005em] sm:text-[68px] lg:mt-5 lg:max-w-none lg:text-[96px]">
+        {title}
+      </h1>
+      {subtitle && <p className="mt-4 max-w-[46ch] text-[14px] text-white/90 sm:text-[16px] lg:mt-6 lg:text-[18px]">{subtitle}</p>}
+      <div className="mt-8 flex w-full max-w-[560px] flex-col gap-3 sm:w-auto sm:flex-row lg:mt-10">
+        <Link
+          href="/men"
+          className="inline-flex h-12 items-center justify-center bg-white px-12 font-display text-[11.5px] font-medium uppercase tracking-[0.26em] text-[#1d1d1b] transition-colors hover:bg-white/85 sm:h-14 sm:min-w-[240px]"
+        >
+          Shop men
+        </Link>
+        <Link
+          href="/women"
+          className="inline-flex h-12 items-center justify-center border border-white px-12 font-display text-[11.5px] font-medium uppercase tracking-[0.26em] text-white transition-colors hover:bg-white hover:text-[#1d1d1b] sm:h-14 sm:min-w-[200px]"
+        >
+          Shop women
+        </Link>
+      </div>
+    </div>
   );
 }
