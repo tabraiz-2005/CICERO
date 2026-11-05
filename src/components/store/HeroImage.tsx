@@ -62,7 +62,7 @@ export function HeroSection({
         />
       </picture>
       {/* Keep the centred headline readable on any photo */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 via-[50%] to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 via-[50%] to-transparent lg:bg-gradient-to-r lg:from-black/70 lg:via-black/30 lg:via-[35%] lg:to-transparent lg:to-[60%]" />
       {children}
     </section>
   );

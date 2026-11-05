@@ -113,9 +113,9 @@ export default async function HomePage() {
 
 function HeroCopy({ eyebrow, title, subtitle }: { eyebrow: string; title: string; subtitle: string }) {
   return (
-    <div className="site-x absolute inset-0 flex flex-col items-center justify-end pb-12 text-center text-white sm:pb-16 lg:pb-20">
+    <div className="site-x absolute inset-0 flex flex-col items-start justify-end pb-12 text-left text-white sm:pb-16 lg:justify-center lg:pb-0">
       {eyebrow && <p className="font-display text-[10.5px] uppercase tracking-[0.36em] text-white/85 sm:text-[12px]">{eyebrow}</p>}
-      <h1 className="mt-4 max-w-[16ch] font-serif text-[46px] font-normal leading-[1] tracking-[0.005em] sm:text-[68px] lg:mt-5 lg:max-w-none lg:text-[96px]">
+      <h1 className="mt-4 max-w-[12ch] font-serif text-[46px] font-normal leading-[1] tracking-[0.005em] sm:text-[68px] lg:mt-5 lg:text-[92px]">
         {title}
       </h1>
       {subtitle && <p className="mt-4 max-w-[46ch] text-[14px] text-white/90 sm:text-[16px] lg:mt-6 lg:text-[18px]">{subtitle}</p>}
