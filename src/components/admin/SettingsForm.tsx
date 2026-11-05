@@ -76,16 +76,11 @@ export function SettingsForm({ initial }: { initial: StoreSettings }) {
         <Field label="Text"><input {...t('announcement_text')} className="field" /></Field>
       </Section>
 
-      <Section title="Homepage hero" hint="The big campaign block at the top of the homepage. Portrait or landscape photos both work; the image sits on the right.">
+      <Section title="Homepage hero" hint="The big photo at the top of the homepage. Add a wide photo for computers and a tall one for phones; each screen shows its own photo in full.">
         <div className="grid gap-4 lg:grid-cols-[1fr_220px_180px]">
           <div className="space-y-4">
             <Field label="Small label"><input {...t('hero_eyebrow')} className="field" /></Field>
             <Field label="Headline"><input {...t('hero_title')} className="field" /></Field>
-            <Field label="Sub-headline"><textarea rows={2} {...t('hero_subtitle')} className="field h-auto py-3" /></Field>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Button text"><input {...t('hero_cta_label')} className="field" /></Field>
-              <Field label="Button link" hint="e.g. /shop, /women, /collections/winter-edit"><input {...t('hero_cta_href')} className="field" /></Field>
-            </div>
           </div>
           <Field label="Hero image · computer" hint="Wide (landscape) photo, e.g. 2400 × 1350.">
             <SingleImage value={s.hero_image_url} onChange={(u) => set('hero_image_url', u)} folder="site" aspect="aspect-[16/10]" />

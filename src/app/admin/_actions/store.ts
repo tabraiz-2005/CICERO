@@ -189,6 +189,12 @@ export async function saveSettings(s: Partial<StoreSettings>): Promise<ActionRes
       const missing = /could not find the '([a-z0-9_]+)' column/i.exec(error.message)?.[1];
       if (!missing || !(missing in payload) || missing === 'id') throw error;
       delete payload[missing];
+      // No phone-hero column yet: keep the phone photo in the (unused) hero
+      // button-link field instead, so it still works without any SQL.
+      if (missing === 'hero_image_mobile_url') {
+        if (row.hero_image_mobile_url) payload.hero_cta_href = row.hero_image_mobile_url;
+        continue;
+      }
       skipped.push(missing);
     }
     refresh();

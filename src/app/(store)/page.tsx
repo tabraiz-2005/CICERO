@@ -22,7 +22,7 @@ export default async function HomePage() {
       {/* Campaign hero */}
       {settings.hero_image_url ? (
         <HeroSection desktop={settings.hero_image_url} mobile={settings.hero_image_mobile_url} alt={settings.hero_title}>
-        <div className="site-x relative flex h-full flex-col justify-end pb-12 pt-[var(--header-h)] lg:justify-center lg:pb-0">
+        <div className="site-x absolute inset-0 flex flex-col justify-end pb-10 pt-[var(--header-h)] lg:justify-center lg:pb-0">
           <div className="max-w-[720px] text-white">
             <p className="font-display text-[11px] uppercase tracking-[0.32em] text-white/75 sm:text-[12px]">{settings.hero_eyebrow}</p>
             <h1 className="mt-4 font-display text-[40px] font-light uppercase leading-[1.02] tracking-[0.06em] sm:text-[56px] lg:text-[72px]">
@@ -49,7 +49,7 @@ export default async function HomePage() {
         <section className="relative -mt-[var(--header-h)] h-[100svh] max-h-[900px] min-h-[560px] overflow-hidden bg-black">
           <GarmentArt category="coat" className="bg-surface" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
-        <div className="site-x relative flex h-full flex-col justify-end pb-12 pt-[var(--header-h)] lg:justify-center lg:pb-0">
+        <div className="site-x absolute inset-0 flex flex-col justify-end pb-10 pt-[var(--header-h)] lg:justify-center lg:pb-0">
           <div className="max-w-[720px] text-white">
             <p className="font-display text-[11px] uppercase tracking-[0.32em] text-white/75 sm:text-[12px]">{settings.hero_eyebrow}</p>
             <h1 className="mt-4 font-display text-[40px] font-light uppercase leading-[1.02] tracking-[0.06em] sm:text-[56px] lg:text-[72px]">

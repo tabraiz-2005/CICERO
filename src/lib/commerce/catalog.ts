@@ -195,7 +195,8 @@ const appeal = (p: Product) =>
   (p.isFeatured ? 1000 : 0) + Math.min(p.images.length, 4) * 20 + Math.min(p.availableColors.length, 3) * 15 + Math.min(p.price / 1000, 15);
 
 /** "Faded Wash Fleece Trousers – Purple" and "– Red" are the same style; keep them apart. */
-const styleName = (p: Product) => p.title.split(/\s[–-]\s/)[0].trim().toLowerCase();
+const styleName = (p: Product) =>
+  p.title.split(/\s[–-]\s/)[0].replace(/\s*[-=]\s*\d+$/, '').trim().toLowerCase();
 
 function bestFirstVaried(list: Product[]): Product[] {
   const sorted = [...list].sort((a, b) => appeal(b) - appeal(a));
@@ -248,7 +249,7 @@ function spread(products: Product[]): Product[] {
  * appealing pieces of each category first, colour versions kept apart, and
  * sold-out pieces at the very end.
  */
-const FRESH_COUNT = 16;
+const FRESH_COUNT = 24;
 const FRESH_DAYS = 10;
 
 /** The latest pieces: the newest uploads (up to 16, within 10 days of the most recent one). */
@@ -433,5 +434,8 @@ export const getSettings = cache(async (): Promise<StoreSettings> => {
     if (error) logError('settings', error);
     return DEFAULT_SETTINGS;
   }
-  return { ...DEFAULT_SETTINGS, ...data } as StoreSettings;
+  const s = { ...DEFAULT_SETTINGS, ...data } as StoreSettings;
+  // Phone hero saved in the fallback field (databases without the new column).
+  if (!s.hero_image_mobile_url && /^https?:\/\//.test(s.hero_cta_href ?? '')) s.hero_image_mobile_url = s.hero_cta_href;
+  return s;
 });
