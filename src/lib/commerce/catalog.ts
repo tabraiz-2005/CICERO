@@ -1,4 +1,5 @@
 import 'server-only';
+import { groupByLook } from './tone';
 
 import { cache } from 'react';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
@@ -331,7 +332,10 @@ export async function getProducts(filter: ProductFilter = {}): Promise<Product[]
       sorted.sort((a, b) => Number(Boolean(b.isNewArrival)) - Number(Boolean(a.isNewArrival)));
       break;
     default:
-      return filter.limit ? arrange(sorted).slice(0, filter.limit) : arrange(sorted);
+    {
+      const looked = await groupByLook(arrange(sorted));
+      return filter.limit ? looked.slice(0, filter.limit) : looked;
+    }
   }
   return filter.limit ? sorted.slice(0, filter.limit) : sorted;
 }

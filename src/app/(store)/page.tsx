@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { HeroSection } from '@/components/store/HeroImage';
 import { ArrowUpRight, ShieldCheck, Truck, RotateCcw } from 'lucide-react';
+import { groupByLook } from '@/lib/commerce/tone';
 import { arrange, getCollections, getProducts, getSettings } from '@/lib/commerce/catalog';
 import { ProductCard } from '@/components/store/ProductCard';
 import { GarmentArt } from '@/components/store/GarmentArt';
@@ -14,7 +15,7 @@ export default async function HomePage() {
     getProducts({ sort: 'recent' }),
   ]);
   // One list: the latest uploads and featured pieces first, all categories mixed.
-  const everything = arrange(all);
+  const everything = await groupByLook(arrange(all));
   const ALL_LIMIT = 24;
 
   return (
