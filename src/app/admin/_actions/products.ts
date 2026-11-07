@@ -85,8 +85,15 @@ export async function saveProduct(p: ProductPayload): Promise<ActionResult<{ id:
       const key = `${color.toLowerCase()}|${size.toLowerCase()}`;
       if (seen.has(key)) throw new Error(`Duplicate variant: ${color} / ${size}.`);
       seen.add(key);
-      const vsku = (v.sku || `${sku}-${color.slice(0, 3)}-${size}`).trim().toUpperCase().replace(/\s+/g, '-');
-      if (skus.has(vsku)) throw new Error(`Two variants share the SKU ${vsku}.`);
+      // Auto SKU uses more of the colour name (GREEN vs GREY), and never repeats.
+      const colourCode = color.replace(/[^a-z0-9]/gi, '').slice(0, 8) || 'C';
+      let vsku = (v.sku || `${sku}-${colourCode}-${size}`).trim().toUpperCase().replace(/\s+/g, '-');
+      if (skus.has(vsku) && !v.sku) {
+        let n = 2;
+        while (skus.has(`${vsku}-${n}`)) n++;
+        vsku = `${vsku}-${n}`;
+      }
+      if (skus.has(vsku)) throw new Error(`Two variants share the SKU ${vsku}. Change one of them in the SKU column.`);
       skus.add(vsku);
       const vprice = money(v.price || price);
       if (Number.isNaN(vprice)) throw new Error(`Invalid price for ${color} / ${size}.`);

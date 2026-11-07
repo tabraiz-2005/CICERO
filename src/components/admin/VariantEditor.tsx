@@ -245,7 +245,7 @@ export function VariantEditor({
                         <td className="px-3 py-2">
                           <input
                             value={v.sku}
-                            placeholder={`${baseSku || 'SKU'}-${c.name.slice(0, 3).toUpperCase()}-${s}`}
+                            placeholder={`${baseSku || 'SKU'}-${c.name.replace(/[^a-z0-9]/gi, '').slice(0, 8).toUpperCase()}-${s}`}
                             onChange={(e) => setCell(c.name, s, { sku: e.target.value.toUpperCase() })}
                             className="field h-9 w-48 text-xs"
                           />
