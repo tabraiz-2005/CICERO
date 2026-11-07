@@ -135,7 +135,7 @@ export function ProductView({
           {images.length ? (
             images.map((img, i) => (
               <div key={img.url + i} className="relative aspect-[4/5] max-h-[72svh] w-full shrink-0 snap-center bg-[#ebe9e6] md:max-h-none">
-                <Img src={img.url} alt={img.alt || product.title} sizes="(max-width:768px) 100vw, 620px" priority={i === 0} className="object-contain" />
+                <Img src={img.url} alt={img.alt || product.title} sizes="(max-width:768px) 100vw, 620px" priority={i === 0} className="object-cover object-top" />
               </div>
             ))
           ) : (
