@@ -17,6 +17,7 @@ import {
   UserRound,
   Users,
   X,
+  Truck,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
@@ -27,6 +28,7 @@ import { Logo } from '@/components/store/Logo';
 const NAV = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
   { href: '/admin/orders', label: 'Orders', icon: Receipt },
+  { href: '/admin/shipped', label: 'Shipped items', icon: Truck },
   { href: '/admin/products', label: 'Products', icon: Package },
   { href: '/admin/inventory', label: 'Inventory', icon: Boxes },
   { href: '/admin/categories', label: 'Categories', icon: FolderTree },
