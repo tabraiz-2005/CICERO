@@ -18,6 +18,7 @@ import {
   Users,
   X,
   Truck,
+  BarChart3,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
@@ -27,6 +28,7 @@ import { Logo } from '@/components/store/Logo';
 
 const NAV = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
+  { href: '/admin/analytics', label: 'Visitors', icon: BarChart3 },
   { href: '/admin/orders', label: 'Orders', icon: Receipt },
   { href: '/admin/shipped', label: 'Shipped items', icon: Truck },
   { href: '/admin/products', label: 'Products', icon: Package },

@@ -3,6 +3,7 @@ import { WishlistProvider } from '@/context/WishlistContext';
 import { Header } from '@/components/store/Header';
 import { Footer } from '@/components/store/Footer';
 import { PageTransition } from '@/components/store/PageTransition';
+import { Tracker } from '@/components/store/Tracker';
 import { Suspense } from 'react';
 import { CartDrawer } from '@/components/store/CartDrawer';
 import { WhatsAppButton } from '@/components/store/WhatsAppButton';
@@ -34,6 +35,7 @@ export default async function StoreLayout({ children }: { children: React.ReactN
         <WhatsAppButton phone={settings.contact_phone} storeName={settings.store_name} />
         <Suspense fallback={null}>
           <PageTransition />
+          <Tracker />
         </Suspense>
       </CartProvider>
     </WishlistProvider>
