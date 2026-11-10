@@ -8,14 +8,19 @@ import { MetaPixel } from '@/components/store/MetaPixel';
 import { Suspense } from 'react';
 import { CartDrawer } from '@/components/store/CartDrawer';
 import { WhatsAppButton } from '@/components/store/WhatsAppButton';
-import { getCategories, getSettings } from '@/lib/commerce/catalog';
+import { getCategories, getProducts, getSettings } from '@/lib/commerce/catalog';
+import { SaleBar, SaleSplash } from '@/components/store/SaleSplash';
 import { storeJsonLd } from '@/lib/commerce/local';
 import { env } from '@/lib/env';
 
 export const dynamic = 'force-dynamic';
 
 export default async function StoreLayout({ children }: { children: React.ReactNode }) {
-  const [settings, categories] = await Promise.all([getSettings(), getCategories()]);
+  const [settings, categories, products] = await Promise.all([getSettings(), getCategories(), getProducts()]);
+  // Biggest real discount in the store, for the 11.11 message (rounded down to a multiple of 5).
+  const maxOff = Math.floor(
+    Math.max(0, ...products.map((p) => (p.compareAtPrice && p.compareAtPrice > p.price ? ((p.compareAtPrice - p.price) / p.compareAtPrice) * 100 : 0))) / 5
+  ) * 5;
   const nav = categories.map((c) => ({ slug: c.slug, name: c.name, gender: c.gender }));
 
   return (
@@ -23,6 +28,7 @@ export default async function StoreLayout({ children }: { children: React.ReactN
       <CartProvider>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(storeJsonLd(settings, env.siteUrl)).replace(/</g, '\\u003c') }} />
         <div className="flex min-h-screen flex-col">
+          <SaleBar maxOff={maxOff} />
           <Header
             storeName={settings.store_name}
             categories={nav}
@@ -32,6 +38,7 @@ export default async function StoreLayout({ children }: { children: React.ReactN
           <main className="flex-1">{children}</main>
           <Footer settings={settings} categories={nav} />
         </div>
+        <SaleSplash maxOff={maxOff} />
         <CartDrawer freeShippingThreshold={settings.free_shipping_threshold} />
         <WhatsAppButton phone={settings.contact_phone} storeName={settings.store_name} />
         <Suspense fallback={null}>
