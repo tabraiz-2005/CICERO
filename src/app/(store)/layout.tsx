@@ -8,7 +8,7 @@ import { MetaPixel } from '@/components/store/MetaPixel';
 import { Suspense } from 'react';
 import { CartDrawer } from '@/components/store/CartDrawer';
 import { WhatsAppButton } from '@/components/store/WhatsAppButton';
-import { getCategories, getProducts, getSettings } from '@/lib/commerce/catalog';
+import { getCategories, getSettings } from '@/lib/commerce/catalog';
 import { SaleBar, SaleSplash } from '@/components/store/SaleSplash';
 import { storeJsonLd } from '@/lib/commerce/local';
 import { env } from '@/lib/env';
@@ -16,11 +16,9 @@ import { env } from '@/lib/env';
 export const dynamic = 'force-dynamic';
 
 export default async function StoreLayout({ children }: { children: React.ReactNode }) {
-  const [settings, categories, products] = await Promise.all([getSettings(), getCategories(), getProducts()]);
-  // Biggest real discount in the store, for the 11.11 message (rounded down to a multiple of 5).
-  const maxOff = Math.floor(
-    Math.max(0, ...products.map((p) => (p.compareAtPrice && p.compareAtPrice > p.price ? ((p.compareAtPrice - p.price) / p.compareAtPrice) * 100 : 0))) / 5
-  ) * 5;
+  const [settings, categories] = await Promise.all([getSettings(), getCategories()]);
+  // 11.11 sale discount shown in the top bar and the welcome popup.
+  const maxOff = 25;
   const nav = categories.map((c) => ({ slug: c.slug, name: c.name, gender: c.gender }));
 
   return (
