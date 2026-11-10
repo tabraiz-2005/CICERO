@@ -24,3 +24,5 @@ sweater images/
 *.jpeg
 !public/**
 *.zip
+QR-CICERO/
+logo+us/
