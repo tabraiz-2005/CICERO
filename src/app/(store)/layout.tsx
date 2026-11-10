@@ -4,6 +4,7 @@ import { Header } from '@/components/store/Header';
 import { Footer } from '@/components/store/Footer';
 import { PageTransition } from '@/components/store/PageTransition';
 import { Tracker } from '@/components/store/Tracker';
+import { MetaPixel } from '@/components/store/MetaPixel';
 import { Suspense } from 'react';
 import { CartDrawer } from '@/components/store/CartDrawer';
 import { WhatsAppButton } from '@/components/store/WhatsAppButton';
@@ -36,6 +37,7 @@ export default async function StoreLayout({ children }: { children: React.ReactN
         <Suspense fallback={null}>
           <PageTransition />
           <Tracker />
+          <MetaPixel />
         </Suspense>
       </CartProvider>
     </WishlistProvider>

@@ -1,5 +1,6 @@
 'use client';
 
+import { track } from '@/lib/pixel';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import type { CartItem, Product, ProductVariant } from '@/lib/commerce/types';
 import { primaryImage } from '@/lib/utils';
@@ -46,6 +47,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [items, hydrated]);
 
   const addItem = useCallback((product: Product, variant: ProductVariant, quantity = 1) => {
+    track('AddToCart', { content_ids: [product.id], content_name: product.title, content_type: 'product', value: (variant.price || product.price) * quantity, currency: 'PKR' });
     const max = Math.max(1, Math.min(20, variant.inventoryQuantity));
     setItems((prev) => {
       const i = prev.findIndex((it) => it.variantId === variant.id);

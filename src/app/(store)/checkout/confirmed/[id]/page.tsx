@@ -1,3 +1,4 @@
+import { PixelEvent } from '@/components/store/PixelEvent';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -32,6 +33,11 @@ export default async function OrderConfirmed({ params }: { params: Promise<{ id:
 
   return (
     <div className="site-x py-14 lg:py-20">
+      <PixelEvent
+        name="Purchase"
+        once={o.order_number}
+        data={{ value: o.total_amount / 100, currency: 'PKR', num_items: (o.order_items ?? []).reduce((n: number, i: { quantity: number }) => n + i.quantity, 0), content_type: 'product' }}
+      />
       <div className="mx-auto max-w-2xl border border-line bg-surface p-8 sm:p-12">
         <div className="flex h-14 w-14 items-center justify-center border border-line-strong">
           <Check className="h-6 w-6" />

@@ -1,3 +1,4 @@
+import { PixelEvent } from '@/components/store/PixelEvent';
 import type { Metadata } from 'next';
 import { getSettings } from '@/lib/commerce/catalog';
 import { CheckoutForm } from './CheckoutForm';
@@ -7,6 +8,8 @@ export const metadata: Metadata = { title: 'Checkout', robots: { index: false } 
 export default async function CheckoutPage() {
   const settings = await getSettings();
   return (
+    <>
+    <PixelEvent name="InitiateCheckout" data={{ currency: 'PKR' }} />
     <CheckoutForm
       shipping={{
         standard: settings.standard_shipping_amount,
@@ -14,5 +17,6 @@ export default async function CheckoutPage() {
         freeThreshold: settings.free_shipping_threshold,
       }}
     />
+    </>
   );
 }

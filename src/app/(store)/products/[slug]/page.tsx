@@ -1,3 +1,4 @@
+import { PixelEvent } from '@/components/store/PixelEvent';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getProductBySlug, getRelatedProducts, getSettings } from '@/lib/commerce/catalog';
@@ -44,6 +45,7 @@ export default async function ProductPage({ params }: Props) {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <PixelEvent name="ViewContent" data={{ content_ids: [product.id], content_name: product.title, content_type: 'product', value: product.price, currency: 'PKR' }} />
       <ProductView
         product={product}
         lowStockThreshold={settings.low_stock_threshold}
